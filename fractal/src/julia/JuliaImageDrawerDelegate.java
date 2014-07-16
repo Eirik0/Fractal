@@ -30,14 +30,14 @@ public class JuliaImageDrawerDelegate {
 	}
 
 	public BufferedImage requestImage() {
-		if (needsNewImage || checkDrawersRequestStop()) {
+		if (needsNewImage) {
 			needsNewImage = false;
 			return requestNewImage();
 		}
 
 		for (JuliaDrawer drawer : new ArrayList<JuliaDrawer>(drawers)) {
 			if (drawer.isDrawingComplete()) {
-				drawDrawer(drawer);
+				drawer.drawOn(currentGraphics);
 				drawers.remove(drawer);
 				splitSlowestDrawer();
 				break; // only split one at a time
@@ -54,9 +54,7 @@ public class JuliaImageDrawerDelegate {
 
 		JuliaDrawer slowest = drawers.get(0);
 		for (JuliaDrawer drawer : drawers) {
-			if (drawer.getDataPerPixel() < slowest.getDataPerPixel()) {
-				slowest = drawer;
-			} else if (drawer.getDataPerPixel() == slowest.getDataPerPixel() && drawer.getImageHeight() > slowest.getImageHeight()) {
+			if (drawer.isSlowerThan(slowest)) {
 				slowest = drawer;
 			}
 		}
@@ -109,14 +107,10 @@ public class JuliaImageDrawerDelegate {
 		}
 
 		for (JuliaDrawer drawer : drawers) {
-			drawDrawer(drawer);
+			drawer.drawOn(currentGraphics);
 		}
 
 		return currentImage;
-	}
-
-	private void drawDrawer(JuliaDrawer drawer) {
-		currentGraphics.drawImage(drawer.getImage(), drawer.getImageX0(), drawer.getImageY0(), drawer.getImageWidth(), drawer.getImageHeight(), null);
 	}
 
 	private BufferedImage requestNewImage() {
@@ -150,13 +144,5 @@ public class JuliaImageDrawerDelegate {
 				drawers.add(new JuliaDrawer(juliaSet, sizer, (int) x0, (int) y0, (int) x1, (int) y1));
 			}
 		}
-	}
-
-	private boolean checkDrawersRequestStop() {
-		boolean stopped = false;
-		for (JuliaDrawer drawer : drawers) {
-			stopped |= drawer.isStopRequested();
-		}
-		return stopped;
 	}
 }

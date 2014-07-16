@@ -18,7 +18,7 @@ public class JuliaDrawer {
 	private boolean isDrawingComplete;
 	private double dataPerPixel;
 
-	private int x;
+	private int currentX;
 	private int initialX;
 
 	private int x0;
@@ -59,69 +59,58 @@ public class JuliaDrawer {
 
 	public List<JuliaDrawer> splitVertically() {
 		double newDataPointsPer = dataPerPixel;
-		int currentX = getCurrentX();
+		int xAtTimeOfSplit = currentX;
 		requestStop(); // this will inadvertently increment dataPointsPer
 
 		int newHeight = (y1 - y0) / 2;
-		int newWidth = x1 - x0;
+		int newWidth = getImageWidth();
 
 		int midpoint = y0 + newHeight;
 
 		BufferedImage top = image.getSubimage(0, 0, newWidth, newHeight);
 		Graphics2D g1 = top.createGraphics();
 		g1.setColor(Color.RED);
-		g1.drawLine(currentX - x0, 0, newWidth, 0);
+		g1.drawLine(xAtTimeOfSplit - x0, 0, newWidth, 0);
 
 		BufferedImage bottom = image.getSubimage(0, newHeight, newWidth, (y1 - y0) - newHeight);
 		Graphics2D g2 = bottom.createGraphics();
 		g2.setColor(Color.RED);
-		g2.drawLine(currentX - x0, 0, newWidth, 0);
+		g2.drawLine(xAtTimeOfSplit - x0, 0, newWidth, 0);
 
 		List<JuliaDrawer> drawers = new ArrayList<>();
-		drawers.add(new JuliaDrawer(top, julia, sizer, x0, y0, x1, midpoint, newDataPointsPer, currentX));
-		drawers.add(new JuliaDrawer(bottom, julia, sizer, x0, midpoint, x1, y1, newDataPointsPer, currentX));
+		drawers.add(new JuliaDrawer(top, julia, sizer, x0, y0, x1, midpoint, newDataPointsPer, xAtTimeOfSplit));
+		drawers.add(new JuliaDrawer(bottom, julia, sizer, x0, midpoint, x1, y1, newDataPointsPer, xAtTimeOfSplit));
 
 		return drawers;
-	}
-
-	public BufferedImage getImage() {
-		return image;
 	}
 
 	public void requestStop() {
 		noStopRequested = false;
 	}
 
-	public boolean isStopRequested() {
-		return !noStopRequested;
+	public boolean isSlowerThan(JuliaDrawer slowest) {
+		if (dataPerPixel < slowest.dataPerPixel) {
+			return true;
+		} else if (dataPerPixel == slowest.dataPerPixel && getImageHeight() > slowest.getImageHeight()) {
+			return true;
+		}
+		return false;
+	}
+
+	public void drawOn(Graphics g) {
+		g.drawImage(image, x0, y0, getImageWidth(), getImageHeight(), null);
 	}
 
 	public boolean isDrawingComplete() {
 		return isDrawingComplete;
 	}
 
-	public double getDataPerPixel() {
-		return dataPerPixel;
-	}
-
-	public int getImageX0() {
-		return x0;
-	}
-
-	public int getImageY0() {
-		return y0;
-	}
-
 	public int getImageHeight() {
 		return y1 - y0;
 	}
 
-	public int getImageWidth() {
+	private int getImageWidth() {
 		return x1 - x0;
-	}
-
-	private int getCurrentX() {
-		return x;
 	}
 
 	private void startDrawing() {
@@ -130,9 +119,6 @@ public class JuliaDrawer {
 
 			while (noStopRequested && dataPerPixel <= 8) {
 				drawSquares(g, dataPerPixel);
-				// if (dataPerPixel >= 1) {
-				// julia.doubleMaxIterations();
-				// }
 				dataPerPixel *= 2;
 			}
 
@@ -145,21 +131,20 @@ public class JuliaDrawer {
 		int width = dataPerPixel < 1 ? (int) pixelPerData : 1;
 		int offset = width / 2;
 
-		x = initialX;
+		currentX = initialX;
 		do {
 			int y = y0;
 			do {
 				if (dataPerPixel <= 1) {
-					g.setColor(colorer.getColor(julia.getIterations(sizer.getX(x + offset), sizer.getY(y + offset))));
+					g.setColor(colorer.getColor(julia.getIterations(sizer.getX(currentX + offset), sizer.getY(y + offset))));
 				} else {
-					g.setColor(getAntiAliasedColor(pixelPerData, x, y));
+					g.setColor(getAntiAliasedColor(pixelPerData, currentX, y));
 				}
-				g.fillRect(x - x0, y - y0, width, width);
+				g.fillRect(currentX - x0, y - y0, width, width);
 				y += width;
 			} while (noStopRequested && y < y1);
-			x += width;
-		} while (noStopRequested && x < x1);
-
+			currentX += width;
+		} while (noStopRequested && currentX < x1);
 		initialX = x0;
 	}
 
