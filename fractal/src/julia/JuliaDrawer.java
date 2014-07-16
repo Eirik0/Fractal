@@ -93,6 +93,8 @@ public class JuliaDrawer {
 			return true;
 		} else if (dataPerPixel == slowest.dataPerPixel && getImageHeight() > slowest.getImageHeight()) {
 			return true;
+		} else if (getImageHeight() == slowest.getImageHeight() && currentX - x0 < slowest.currentX - slowest.x0) {
+			return true;
 		}
 		return false;
 	}

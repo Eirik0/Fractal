@@ -29,40 +29,64 @@ public class JuliaImageDrawerDelegate {
 		setUpDrawers(imageWidth, imageHeight);
 	}
 
+	private void setUpDrawers(double imageWidth, double imageHeight) {
+		drawers.clear();
+
+		int coresToUse = Math.max(1, Runtime.getRuntime().availableProcessors() - 2);
+		int horizontalDrawers = coresToUse == 1 ? 1 : 2;
+		int verticalDrawers = coresToUse / horizontalDrawers;
+		numberOfDrawers = horizontalDrawers * verticalDrawers;
+
+		double width = imageWidth / horizontalDrawers;
+		double height = imageHeight / verticalDrawers;
+		for (int x = 0; x < horizontalDrawers; ++x) {
+			for (int y = 0; y < verticalDrawers; ++y) {
+				double x0 = x * width;
+				double x1 = x0 + width;
+
+				double y0 = y * height;
+				double y1 = y0 + height;
+
+				drawers.add(new JuliaDrawer(juliaSet, sizer, (int) x0, (int) y0, (int) x1, (int) y1));
+			}
+		}
+	}
+
 	public BufferedImage requestImage() {
 		if (needsNewImage) {
 			needsNewImage = false;
 			return requestNewImage();
 		}
 
-		for (JuliaDrawer drawer : new ArrayList<JuliaDrawer>(drawers)) {
-			if (drawer.isDrawingComplete()) {
-				drawer.drawOn(currentGraphics);
-				drawers.remove(drawer);
-				splitSlowestDrawer();
-				break; // only split one at a time
-			}
-		}
+		checkSplit();
 
 		return createImageFromDrawers();
 	}
 
-	private void splitSlowestDrawer() {
-		if (drawers.size() == 0 || drawers.size() >= numberOfDrawers) {
-			return;
-		}
-
-		JuliaDrawer slowest = drawers.get(0);
+	private BufferedImage requestNewImage() {
 		for (JuliaDrawer drawer : drawers) {
-			if (drawer.isSlowerThan(slowest)) {
-				slowest = drawer;
-			}
+			drawer.requestStop();
 		}
 
-		if (!slowest.isDrawingComplete() && slowest.getImageHeight() > 1) {
-			drawers.remove(slowest);
-			drawers.addAll(slowest.splitVertically());
+		setUpDrawers(sizer.getImageWidth(), sizer.getImageHeight());
+
+		return createImageFromDrawers();
+	}
+
+	private BufferedImage createImageFromDrawers() {
+		int width = sizer.getImageWidth();
+		int height = sizer.getImageHeight();
+
+		if (currentImage.getWidth() != width || currentImage.getHeight() != height) {
+			currentImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+			currentGraphics = currentImage.createGraphics();
 		}
+
+		for (JuliaDrawer drawer : drawers) {
+			drawer.drawOn(currentGraphics);
+		}
+
+		return currentImage;
 	}
 
 	// Sizer
@@ -97,52 +121,39 @@ public class JuliaImageDrawerDelegate {
 		needsNewImage = true;
 	}
 
-	private BufferedImage createImageFromDrawers() {
-		int width = sizer.getImageWidth();
-		int height = sizer.getImageHeight();
-
-		if (currentImage.getWidth() != width || currentImage.getHeight() != height) {
-			currentImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-			currentGraphics = currentImage.createGraphics();
-		}
-
+	private void checkSplit() {
+		JuliaDrawer firstFinished = null;
 		for (JuliaDrawer drawer : drawers) {
-			drawer.drawOn(currentGraphics);
-		}
-
-		return currentImage;
-	}
-
-	private BufferedImage requestNewImage() {
-		for (JuliaDrawer drawer : drawers) {
-			drawer.requestStop();
-		}
-
-		setUpDrawers(sizer.getImageWidth(), sizer.getImageHeight());
-
-		return createImageFromDrawers();
-	}
-
-	private void setUpDrawers(double imageWidth, double imageHeight) {
-		drawers.clear();
-
-		int coresToUse = Math.max(1, Runtime.getRuntime().availableProcessors() - 2);
-		int horizontalDrawers = coresToUse == 1 ? 1 : 2;
-		int verticalDrawers = coresToUse / horizontalDrawers;
-		numberOfDrawers = horizontalDrawers * verticalDrawers;
-
-		double width = imageWidth / horizontalDrawers;
-		double height = imageHeight / verticalDrawers;
-		for (int x = 0; x < horizontalDrawers; ++x) {
-			for (int y = 0; y < verticalDrawers; ++y) {
-				double x0 = x * width;
-				double x1 = x0 + width;
-
-				double y0 = y * height;
-				double y1 = y0 + height;
-
-				drawers.add(new JuliaDrawer(juliaSet, sizer, (int) x0, (int) y0, (int) x1, (int) y1));
+			if (drawer.isDrawingComplete()) {
+				firstFinished = drawer;
+				break;
 			}
 		}
+
+		if (firstFinished != null) {
+			firstFinished.drawOn(currentGraphics);
+			drawers.remove(firstFinished);
+
+			if (drawers.size() == 0 || drawers.size() >= numberOfDrawers) {
+				return;
+			}
+
+			JuliaDrawer slowest = getSlowest();
+
+			if (!slowest.isDrawingComplete() && slowest.getImageHeight() > 1) {
+				drawers.remove(slowest);
+				drawers.addAll(slowest.splitVertically());
+			}
+		}
+	}
+
+	private JuliaDrawer getSlowest() {
+		JuliaDrawer slowest = drawers.get(0);
+		for (JuliaDrawer drawer : drawers) {
+			if (drawer.isSlowerThan(slowest)) {
+				slowest = drawer;
+			}
+		}
+		return slowest;
 	}
 }
