@@ -10,8 +10,7 @@ public class JuliaImageDrawerDelegate {
 	private Fractal juliaSet;
 	private JuliaSizer sizer;
 
-	private int verticalDrawers = 2;
-	private int horizontalDrawers = 2;
+	private int numberOfDrawers = 0;
 	private List<JuliaDrawer> drawers = new ArrayList<>();
 
 	private boolean needsNewImage = false;
@@ -49,7 +48,7 @@ public class JuliaImageDrawerDelegate {
 	}
 
 	private void splitSlowestDrawer() {
-		if (drawers.size() == 0 || drawers.size() >= verticalDrawers * horizontalDrawers) {
+		if (drawers.size() == 0 || drawers.size() >= numberOfDrawers) {
 			return;
 		}
 
@@ -132,6 +131,11 @@ public class JuliaImageDrawerDelegate {
 
 	private void setUpDrawers(double imageWidth, double imageHeight) {
 		drawers.clear();
+
+		int coresToUse = Math.max(1, Runtime.getRuntime().availableProcessors() - 2);
+		int horizontalDrawers = coresToUse == 1 ? 1 : 2;
+		int verticalDrawers = coresToUse / horizontalDrawers;
+		numberOfDrawers = horizontalDrawers * verticalDrawers;
 
 		double width = imageWidth / horizontalDrawers;
 		double height = imageHeight / verticalDrawers;
