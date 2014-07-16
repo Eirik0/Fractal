@@ -1,11 +1,13 @@
 package julia;
 
+import gui.FractalMain.Fractal;
+
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
 public class JuliaImageDrawerDelegate {
-	private JuliaSet juliaSet;
+	private Fractal juliaSet;
 	private JuliaSizer sizer;
 
 	private int verticalDrawers = 2;
@@ -17,8 +19,8 @@ public class JuliaImageDrawerDelegate {
 	BufferedImage currentImage;
 	Graphics2D currentGraphics;
 
-	public JuliaImageDrawerDelegate(int imageWidth, int imageHeight) {
-		juliaSet = new JuliaSet(-0.1, 0.651);
+	public JuliaImageDrawerDelegate(int imageWidth, int imageHeight, Fractal fractal) {
+		juliaSet = fractal;
 
 		sizer = new JuliaSizer(-2.5, -2.5, 5, 5, imageWidth, imageHeight);
 
@@ -88,8 +90,8 @@ public class JuliaImageDrawerDelegate {
 	}
 
 	// Other methods
-	public void setC(double x, double y) {
-		juliaSet.setC(x, y);
+	public void setFractal(Fractal fractal) {
+		juliaSet = fractal;
 		needsNewImage = true;
 	}
 
@@ -141,7 +143,7 @@ public class JuliaImageDrawerDelegate {
 				double y0 = y * height;
 				double y1 = y0 + height;
 
-				drawers.add(new JuliaDrawer(juliaSet.clone(), sizer, (int) x0, (int) y0, (int) x1, (int) y1));
+				drawers.add(new JuliaDrawer(juliaSet, sizer, (int) x0, (int) y0, (int) x1, (int) y1));
 			}
 		}
 	}

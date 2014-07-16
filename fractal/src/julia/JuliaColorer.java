@@ -1,5 +1,7 @@
 package julia;
 
+import gui.FractalMain.Fractal;
+
 import java.awt.Color;
 import java.math.BigDecimal;
 import java.util.*;
@@ -26,22 +28,22 @@ public class JuliaColorer {
 		setColorPalette();
 	}
 
-	public Color getColor(int iterations, int maxIterations) {
-		if (iterations > maxIterations - 1) {
+	public Color getColor(int iterations) {
+		if (iterations > Fractal.MAX_ITERATIONS - 1) {
 			return Color.BLACK;
 		}
 
 		return colorPalette.get(iterations % size);
 	}
 
-	public Color getColor(int[] iterations, int maxIterations) {
+	public Color getColor(int[] iterations) {
 		int red = 0;
 		int green = 0;
 		int blue = 0;
 		int count = 0;
 
 		for (int i : iterations) {
-			Color c = getColor(i, maxIterations);
+			Color c = getColor(i);
 			if (c == null) {
 				return Color.BLACK;
 			}

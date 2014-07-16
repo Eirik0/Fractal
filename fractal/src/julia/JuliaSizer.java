@@ -76,10 +76,10 @@ public class JuliaSizer {
 		juliaWidth *= (imageAspectRatio / juliaAspectRatio);
 
 		this.x0 -= (juliaWidth - width) / 2;
-		
+
 		setScale();
 	}
-	
+
 	private void setScale() {
 		scaleX = juliaWidth / imageWidth;
 		scaleY = juliaHeight / imageHeight;

@@ -1,20 +1,15 @@
 package gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.List;
+import java.util.stream.IntStream;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 public class FractalMain {
 	public static void main(String[] args) {
-		FractalPanel fractalPanel = new FractalPanel();
+		FractalPanel fractalPanel = new FractalPanel(new JuliaSet(-0.1, 0.651));
 
 		JLabel divisorLabel = new JLabel("a + bi (a, b): ");
 		divisorLabel.setBackground(Color.BLACK);
@@ -23,25 +18,14 @@ public class FractalMain {
 		JTextField complexNumberField = new JTextField();
 		complexNumberField.setText("-0.1, 0.651");
 		complexNumberField.setColumns(10);
-		complexNumberField.addActionListener(e -> {
-			try {
-				String[] z = complexNumberField.getText().split("[,+]");
-				double x = Double.valueOf(z[0].trim());
-				double y = 0;
-				if (z.length > 1) {
-					y = Double.valueOf(z[1].trim());
-				}
-				fractalPanel.setJulia(x, y);
-			} catch (Exception ex) {
-			}
-		});
+		complexNumberField.addActionListener(e -> fractalPanel.setJulia(new MandelbrotSet()));
 
 		JButton resetZoomButton = new JButton("Reset Zoom");
 		resetZoomButton.addActionListener(e -> fractalPanel.resetZoom());
 
 		JButton resetColorButton = new JButton("Reset Color");
 		resetColorButton.addActionListener(e -> fractalPanel.resetColor());
-		
+
 		JButton saveButton = new JButton("Save");
 		saveButton.addActionListener(e -> fractalPanel.save());
 
@@ -68,5 +52,69 @@ public class FractalMain {
 			}
 		});
 		mainFrame.setVisible(true);
+	}
+
+	public static interface Fractal {
+		public static final int MAX_ITERATIONS = 20000;
+
+		public int getIterations(double x, double y);
+
+		public default int[] getIterations(List<Double> xs, List<Double> ys) {
+			return IntStream.range(0, xs.size()).map(i -> getIterations(xs.get(i), ys.get(i))).toArray();
+		}
+	}
+
+	public static class MandelbrotSet implements Fractal {
+		@Override
+		public int getIterations(double x, double y) {
+			int count = 0;
+
+			double x1 = x;
+			double y1 = y;
+
+			double xsq = x * x;
+			double ysq = y * y;
+
+			while (xsq + ysq < 4 && count <= MAX_ITERATIONS) {
+				xsq = x * x;
+				ysq = y * y;
+
+				y = 2 * x * y + y1;
+				x = xsq - ysq + x1;
+
+				++count;
+			}
+
+			return count;
+		}
+	}
+
+	public static class JuliaSet implements Fractal {
+		private final double cx;
+		private final double cy;
+
+		public JuliaSet(double cx, double cy) {
+			this.cx = cx;
+			this.cy = cy;
+		}
+
+		@Override
+		public int getIterations(double x, double y) {
+			int count = 0;
+
+			double xsq = x * x;
+			double ysq = y * y;
+
+			while (xsq + ysq < 4 && count <= MAX_ITERATIONS) {
+				xsq = x * x;
+				ysq = y * y;
+
+				y = 2 * x * y + cy;
+				x = xsq - ysq + cx;
+				++count;
+			}
+
+			return count;
+		}
 	}
 }

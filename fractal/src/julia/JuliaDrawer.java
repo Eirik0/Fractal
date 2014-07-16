@@ -1,15 +1,16 @@
 package julia;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import gui.FractalMain.Fractal;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 public class JuliaDrawer {
 	private BufferedImage image;
 
-	private JuliaSet julia;
+	private Fractal julia;
 	private JuliaSizer sizer;
 	private JuliaColorer colorer;
 
@@ -25,19 +26,19 @@ public class JuliaDrawer {
 	private int x1;
 	private int y1;
 
-	public JuliaDrawer(JuliaSet julia, JuliaSizer sizer, int x0, int y0, int x1, int y1) {
+	public JuliaDrawer(Fractal julia, JuliaSizer sizer, int x0, int y0, int x1, int y1) {
 		init(julia, sizer, x0, y0, x1, y1, x0, 0.03125);
 		image = new BufferedImage(x1 - x0, y1 - y0, BufferedImage.TYPE_INT_RGB);
 		startDrawing();
 	}
 
-	private JuliaDrawer(BufferedImage image, JuliaSet julia, JuliaSizer sizer, int x0, int y0, int x1, int y1, double dataPerPixel, int initialX) {
+	private JuliaDrawer(BufferedImage image, Fractal julia, JuliaSizer sizer, int x0, int y0, int x1, int y1, double dataPerPixel, int initialX) {
 		init(julia, sizer, x0, y0, x1, y1, initialX, dataPerPixel);
 		this.image = image;
 		startDrawing();
 	}
 
-	private void init(JuliaSet julia, JuliaSizer sizer, int x0, int y0, int x1, int y1, int initialX, double dataPerPixel) {
+	private void init(Fractal julia, JuliaSizer sizer, int x0, int y0, int x1, int y1, int initialX, double dataPerPixel) {
 		this.julia = julia;
 		this.sizer = sizer;
 
@@ -77,8 +78,8 @@ public class JuliaDrawer {
 		g2.drawLine(currentX - x0, 0, newWidth, 0);
 
 		List<JuliaDrawer> drawers = new ArrayList<>();
-		drawers.add(new JuliaDrawer(top, julia.clone(), sizer, x0, y0, x1, midpoint, newDataPointsPer, currentX));
-		drawers.add(new JuliaDrawer(bottom, julia.clone(), sizer, x0, midpoint, x1, y1, newDataPointsPer, currentX));
+		drawers.add(new JuliaDrawer(top, julia, sizer, x0, y0, x1, midpoint, newDataPointsPer, currentX));
+		drawers.add(new JuliaDrawer(bottom, julia, sizer, x0, midpoint, x1, y1, newDataPointsPer, currentX));
 
 		return drawers;
 	}
@@ -129,9 +130,9 @@ public class JuliaDrawer {
 
 			while (noStopRequested && dataPerPixel <= 8) {
 				drawSquares(g, dataPerPixel);
-//				if (dataPerPixel >= 1) {
-//					julia.doubleMaxIterations();
-//				}
+				// if (dataPerPixel >= 1) {
+				// julia.doubleMaxIterations();
+				// }
 				dataPerPixel *= 2;
 			}
 
@@ -149,7 +150,7 @@ public class JuliaDrawer {
 			int y = y0;
 			do {
 				if (dataPerPixel <= 1) {
-					g.setColor(colorer.getColor(julia.getIterations(sizer.getX(x + offset), sizer.getY(y + offset)), julia.maxIterations));
+					g.setColor(colorer.getColor(julia.getIterations(sizer.getX(x + offset), sizer.getY(y + offset))));
 				} else {
 					g.setColor(getAntiAliasedColor(pixelPerData, x, y));
 				}
@@ -175,7 +176,7 @@ public class JuliaDrawer {
 		if (!noStopRequested) {
 			return Color.BLACK;
 		}
-		return colorer.getColor(julia.getIterations(xs, ys), julia.maxIterations);
+		return colorer.getColor(julia.getIterations(xs, ys));
 	}
 
 	@Override

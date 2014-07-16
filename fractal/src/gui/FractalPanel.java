@@ -1,17 +1,15 @@
 package gui;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import gui.FractalMain.Fractal;
+
+import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.concurrent.*;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import julia.JuliaImageDrawerDelegate;
 
@@ -25,11 +23,11 @@ public class FractalPanel extends JPanel {
 	private int dragEndX = 0;
 	private int dragEndY = 0;
 
-	public FractalPanel() {
+	public FractalPanel(Fractal fractal) {
 		setBackground(Color.BLACK);
 		setSize(729, 729);
 
-		delegate = new JuliaImageDrawerDelegate(getWidth(), getHeight());
+		delegate = new JuliaImageDrawerDelegate(getWidth(), getHeight(), fractal);
 
 		addListeners();
 
@@ -89,8 +87,8 @@ public class FractalPanel extends JPanel {
 		delegate.resetColor();
 	}
 
-	public void setJulia(double x, double y) {
-		delegate.setC(x, y);
+	public void setJulia(Fractal fractal) {
+		delegate.setFractal(fractal);
 	}
 
 	public void save() {
