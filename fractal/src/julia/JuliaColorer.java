@@ -8,27 +8,17 @@ import java.util.*;
 import java.util.stream.*;
 
 public class JuliaColorer {
-	private Random r = new Random();
-	private double sq_3 = Math.sqrt(3);
+	private static Random r = new Random();
+	private static double sq_3 = Math.sqrt(3);
 
-	private Map<Integer, Color> colorPalette = new HashMap<Integer, Color>();
-	private int size = 1;
+	private static Map<Integer, Color> colorPalette = new HashMap<Integer, Color>();
+	private static int size = 1;
 
-	private static final JuliaColorer instance = new JuliaColorer();
-
-	public static JuliaColorer getInstance() {
-		return instance;
-	}
-
-	private JuliaColorer() {
+	public static void reset() {
 		setColorPalette();
 	}
 
-	public void reset() {
-		setColorPalette();
-	}
-
-	public Color getColor(int iterations) {
+	public static Color getColor(int iterations) {
 		if (iterations > Fractal.MAX_ITERATIONS - 1) {
 			return Color.BLACK;
 		}
@@ -36,7 +26,7 @@ public class JuliaColorer {
 		return colorPalette.get(iterations % size);
 	}
 
-	public Color getColor(int[] iterations) {
+	public static Color getColor(int[] iterations) {
 		int red = 0;
 		int green = 0;
 		int blue = 0;
@@ -56,7 +46,7 @@ public class JuliaColorer {
 		return new Color((int) ((float) red / count), (int) ((float) green / count), (int) ((float) blue / count));
 	}
 
-	private void setColorPalette() {
+	private static void setColorPalette() {
 		colorPalette.clear();
 		colorPalette.put(0, Color.BLACK);
 
@@ -86,7 +76,7 @@ public class JuliaColorer {
 		size = colorPalette.size();
 	}
 
-	private double getHue(Color c) {
+	private static double getHue(Color c) {
 		int r = c.getRed();
 		int g = c.getGreen();
 		int b = c.getBlue();

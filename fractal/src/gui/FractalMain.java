@@ -7,8 +7,11 @@ import java.util.stream.IntStream;
 
 import javax.swing.*;
 
+import julia.JuliaColorer;
+
 public class FractalMain {
 	public static void main(String[] args) {
+		JuliaColorer.reset();
 		FractalPanel fractalPanel = new FractalPanel(new JuliaSet(-0.1, 0.651));
 
 		JLabel divisorLabel = new JLabel("a + bi (a, b): ");

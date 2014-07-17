@@ -12,7 +12,6 @@ public class JuliaDrawer {
 
 	private Fractal julia;
 	private JuliaSizer sizer;
-	private JuliaColorer colorer;
 
 	private boolean noStopRequested;
 	private boolean isDrawingComplete;
@@ -41,8 +40,6 @@ public class JuliaDrawer {
 	private void init(Fractal julia, JuliaSizer sizer, int x0, int y0, int x1, int y1, int initialX, double dataPerPixel) {
 		this.julia = julia;
 		this.sizer = sizer;
-
-		colorer = JuliaColorer.getInstance();
 
 		noStopRequested = true;
 		isDrawingComplete = false;
@@ -138,7 +135,7 @@ public class JuliaDrawer {
 			int y = y0;
 			do {
 				if (dataPerPixel <= 1) {
-					g.setColor(colorer.getColor(julia.getIterations(sizer.getX(currentX + offset), sizer.getY(y + offset))));
+					g.setColor(JuliaColorer.getColor(julia.getIterations(sizer.getX(currentX + offset), sizer.getY(y + offset))));
 				} else {
 					g.setColor(getAntiAliasedColor(pixelPerData, currentX, y));
 				}
@@ -163,7 +160,7 @@ public class JuliaDrawer {
 		if (!noStopRequested) {
 			return Color.BLACK;
 		}
-		return colorer.getColor(julia.getIterations(xs, ys));
+		return JuliaColorer.getColor(julia.getIterations(xs, ys));
 	}
 
 	@Override
