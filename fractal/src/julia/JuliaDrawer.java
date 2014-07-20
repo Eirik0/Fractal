@@ -57,59 +57,6 @@ public class JuliaDrawer {
 		this.pixelPerData = pixelPerData;
 	}
 
-	public List<JuliaDrawer> splitVertically() {
-		double newPixelPerData = pixelPerData;
-		int xAtTimeOfSplit = currentX;
-		requestStop(); // this will inadvertently increment dataPointsPer
-
-		int newHeight = (y1 - y0) / 2;
-		int newWidth = getImageWidth();
-
-		int midpoint = y0 + newHeight;
-
-		BufferedImage top = image.getSubimage(0, 0, newWidth, newHeight);
-		Graphics2D g1 = top.createGraphics();
-		g1.setColor(Color.RED);
-		g1.drawLine(xAtTimeOfSplit - x0, 0, newWidth, 0);
-
-		BufferedImage bottom = image.getSubimage(0, newHeight, newWidth, (y1 - y0) - newHeight);
-		Graphics2D g2 = bottom.createGraphics();
-		g2.setColor(Color.RED);
-		g2.drawLine(xAtTimeOfSplit - x0, 0, newWidth, 0);
-
-		List<JuliaDrawer> drawers = new ArrayList<>();
-		drawers.add(new JuliaDrawer(top, julia, sizer, x0, y0, x1, midpoint, newPixelPerData, xAtTimeOfSplit));
-		drawers.add(new JuliaDrawer(bottom, julia, sizer, x0, midpoint, x1, y1, newPixelPerData, xAtTimeOfSplit));
-
-		return drawers;
-	}
-
-	public void requestStop() {
-		noStopRequested = false;
-	}
-
-	public boolean isSlowerThan(JuliaDrawer slowest) {
-		return (pixelPerData > slowest.pixelPerData)
-				|| (pixelPerData == slowest.pixelPerData && getImageHeight() > slowest.getImageHeight())
-				|| (getImageHeight() == slowest.getImageHeight() && getImageWidth() < slowest.getImageWidth());
-	}
-
-	public void drawOn(Graphics g) {
-		g.drawImage(image, x0, y0, getImageWidth(), getImageHeight(), null);
-	}
-
-	public boolean isDrawingComplete() {
-		return isDrawingComplete;
-	}
-
-	public int getImageHeight() {
-		return y1 - y0;
-	}
-
-	private int getImageWidth() {
-		return x1 - x0;
-	}
-
 	private void startDrawing() {
 		new Thread(() -> {
 			Graphics2D g = image.createGraphics();
@@ -142,6 +89,63 @@ public class JuliaDrawer {
 			currentX += width;
 		} while (noStopRequested && currentX < x1);
 		initialX = x0;
+	}
+
+	public void drawOn(Graphics g) {
+		g.drawImage(image, x0, y0, getImageWidth(), getImageHeight(), null);
+	}
+
+	public void requestStop() {
+		noStopRequested = false;
+	}
+
+	public boolean isDrawingComplete() {
+		return isDrawingComplete;
+	}
+
+	public boolean isSlowerThan(JuliaDrawer slowest) {
+		return (pixelPerData > slowest.pixelPerData)
+				|| (pixelPerData == slowest.pixelPerData && getImageHeight() > slowest.getImageHeight())
+				|| (getImageHeight() == slowest.getImageHeight() && getImageWidth() < slowest.getImageWidth());
+	}
+
+	public boolean isSplittable() {
+		return getImageHeight() > 1;
+	}
+
+	public List<JuliaDrawer> splitVertically() {
+		double newPixelPerData = pixelPerData;
+		int xAtTimeOfSplit = currentX;
+		requestStop(); // this will inadvertently increment dataPointsPer
+
+		int newHeight = (y1 - y0) / 2;
+		int newWidth = getImageWidth();
+
+		int midpoint = y0 + newHeight;
+
+		BufferedImage top = image.getSubimage(0, 0, newWidth, newHeight);
+		Graphics2D g1 = top.createGraphics();
+		g1.setColor(Color.RED);
+		g1.drawLine(xAtTimeOfSplit - x0, 0, newWidth, 0);
+
+		BufferedImage bottom = image.getSubimage(0, newHeight, newWidth, (y1 - y0) - newHeight);
+		Graphics2D g2 = bottom.createGraphics();
+		g2.setColor(Color.RED);
+		g2.drawLine(xAtTimeOfSplit - x0, 0, newWidth, 0);
+
+		List<JuliaDrawer> drawers = new ArrayList<>();
+		drawers.add(new JuliaDrawer(top, julia, sizer, x0, y0, x1, midpoint, newPixelPerData, xAtTimeOfSplit));
+		drawers.add(new JuliaDrawer(bottom, julia, sizer, x0, midpoint, x1, y1, newPixelPerData, xAtTimeOfSplit));
+
+		return drawers;
+	}
+
+	private int getImageHeight() {
+		return y1 - y0;
+	}
+
+	private int getImageWidth() {
+		return x1 - x0;
 	}
 
 	@Override

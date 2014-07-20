@@ -140,7 +140,7 @@ public class JuliaImageDrawerDelegate {
 
 			JuliaDrawer slowest = getSlowest();
 
-			if (!slowest.isDrawingComplete() && slowest.getImageHeight() > 1) {
+			if (!slowest.isDrawingComplete() && slowest.isSplittable()) {
 				drawers.remove(slowest);
 				drawers.addAll(slowest.splitVertically());
 			}
