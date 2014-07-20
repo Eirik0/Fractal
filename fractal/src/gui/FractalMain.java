@@ -10,7 +10,11 @@ import julia.*;
 public class FractalMain {
 	public static void main(String[] args) {
 		JuliaColorer.setColorPalette();
+
 		FractalPanel fractalPanel = new FractalPanel(new JuliaSet(-0.1, 0.651));
+
+		JPanel backgroundPanel = new JPanel(new BorderLayout());
+		backgroundPanel.add(fractalPanel, BorderLayout.CENTER);
 
 		JLabel divisorLabel = new JLabel("a + bi (a, b): ");
 		divisorLabel.setBackground(Color.BLACK);
@@ -38,20 +42,24 @@ public class FractalMain {
 		buttonPanel.add(resetZoomButton);
 		buttonPanel.add(resetColorButton);
 
-		JPanel mainPanel = new JPanel(new BorderLayout());
-		mainPanel.add(buttonPanel, BorderLayout.NORTH);
-		mainPanel.add(fractalPanel, BorderLayout.CENTER);
+		JPanel glassPanel = new JPanel(new BorderLayout());
+		glassPanel.add(buttonPanel, BorderLayout.NORTH);
 
 		JFrame mainFrame = new JFrame();
 		mainFrame.setTitle("Mandelbrot");
 		mainFrame.setSize(729, 729);
-		mainFrame.add(mainPanel);
+		mainFrame.add(backgroundPanel);
 		mainFrame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
 		});
+
+		JPanel glassPane = (JPanel) mainFrame.getGlassPane();
+		glassPane.add(glassPanel);
+		glassPane.setVisible(true);
+
 		mainFrame.setVisible(true);
 	}
 
