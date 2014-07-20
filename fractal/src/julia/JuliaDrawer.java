@@ -89,14 +89,9 @@ public class JuliaDrawer {
 	}
 
 	public boolean isSlowerThan(JuliaDrawer slowest) {
-		if (pixelPerData > slowest.pixelPerData) {
-			return true;
-		} else if (pixelPerData == slowest.pixelPerData && getImageHeight() > slowest.getImageHeight()) {
-			return true;
-		} else if (getImageHeight() == slowest.getImageHeight() && currentX - x0 < slowest.currentX - slowest.x0) {
-			return true;
-		}
-		return false;
+		return (pixelPerData > slowest.pixelPerData)
+				|| (pixelPerData == slowest.pixelPerData && getImageHeight() > slowest.getImageHeight())
+				|| (getImageHeight() == slowest.getImageHeight() && getImageWidth() < slowest.getImageWidth());
 	}
 
 	public void drawOn(Graphics g) {

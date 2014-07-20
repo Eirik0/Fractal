@@ -14,7 +14,9 @@ import javax.swing.*;
 import julia.JuliaImageDrawerDelegate;
 
 public class FractalPanel extends JPanel {
-	private JuliaImageDrawerDelegate delegate; // initialized on first resize
+	private static final int FRAMES_PER_MILLI = (int) ((1.0 / 60) * 1000);
+
+	private JuliaImageDrawerDelegate delegate;
 	private FractalMouseAdapter mouseAdapter;
 
 	public FractalPanel(Fractal fractal) {
@@ -27,7 +29,7 @@ public class FractalPanel extends JPanel {
 
 		addListeners();
 
-		Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> repaint(), 0, 33, TimeUnit.MILLISECONDS);
+		Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> repaint(), 0, FRAMES_PER_MILLI, TimeUnit.MILLISECONDS);
 	}
 
 	private void addListeners() {
