@@ -14,10 +14,6 @@ public class JuliaColorer {
 	private static Map<Integer, Color> colorPalette = new HashMap<Integer, Color>();
 	private static int size = 1;
 
-	public static void reset() {
-		setColorPalette();
-	}
-
 	public static Color getColor(int iterations) {
 		if (iterations > Fractal.MAX_ITERATIONS - 1) {
 			return Color.BLACK;
@@ -46,7 +42,7 @@ public class JuliaColorer {
 		return new Color((int) ((float) red / count), (int) ((float) green / count), (int) ((float) blue / count));
 	}
 
-	private static void setColorPalette() {
+	public static void setColorPalette() {
 		colorPalette.clear();
 		colorPalette.put(0, Color.BLACK);
 

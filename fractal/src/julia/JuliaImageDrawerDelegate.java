@@ -117,7 +117,7 @@ public class JuliaImageDrawerDelegate {
 	}
 
 	public void resetColor() {
-		JuliaColorer.reset();
+		JuliaColorer.setColorPalette();
 		needsNewImage = true;
 	}
 

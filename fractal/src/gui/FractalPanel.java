@@ -31,7 +31,7 @@ public class FractalPanel extends JPanel {
 
 		addListeners();
 
-		Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> SwingUtilities.invokeLater(() -> repaint()), 0, 33, TimeUnit.MILLISECONDS);
+		Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> repaint(), 0, 33, TimeUnit.MILLISECONDS);
 	}
 
 	private void addListeners() {

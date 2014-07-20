@@ -2,16 +2,14 @@ package gui;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.List;
-import java.util.stream.IntStream;
 
 import javax.swing.*;
 
-import julia.JuliaColorer;
+import julia.*;
 
 public class FractalMain {
 	public static void main(String[] args) {
-		JuliaColorer.reset();
+		JuliaColorer.setColorPalette();
 		FractalPanel fractalPanel = new FractalPanel(new JuliaSet(-0.1, 0.651));
 
 		JLabel divisorLabel = new JLabel("a + bi (a, b): ");
@@ -62,8 +60,17 @@ public class FractalMain {
 
 		public int getIterations(double x, double y);
 
-		public default int[] getIterations(List<Double> xs, List<Double> ys) {
-			return IntStream.range(0, xs.size()).map(i -> getIterations(xs.get(i), ys.get(i))).toArray();
+		public default int[] getIterations(int x, int y, double pixelPerData, JuliaSizer sizer) {
+			int dataPer = (int) Math.round(1 / pixelPerData);
+			int[] iterations = new int[dataPer * dataPer];
+			int i = 0;
+			for (double xOffset = 0; xOffset < 1; xOffset += pixelPerData) {
+				for (double yOffset = 0; yOffset < 1; yOffset += pixelPerData) {
+					iterations[i] = getIterations(sizer.getX(x + xOffset), sizer.getY(y + yOffset));
+					++i;
+				}
+			}
+			return iterations;
 		}
 	}
 
