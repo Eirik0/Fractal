@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Random;
 
 import javax.swing.*;
 
@@ -9,7 +10,7 @@ import julia.*;
 
 public class FractalMain {
 	public static void main(String[] args) {
-		JuliaColorer.setColorPalette();
+		JuliaColorer.resetColors();
 
 		FractalPanel fractalPanel = new FractalPanel(new JuliaSet(-0.1, 0.651));
 
@@ -23,7 +24,7 @@ public class FractalMain {
 		JTextField complexNumberField = new JTextField();
 		complexNumberField.setText("-0.1, 0.651");
 		complexNumberField.setColumns(10);
-		complexNumberField.addActionListener(e -> fractalPanel.setJulia(new MandelbrotSet()));
+		complexNumberField.addActionListener(e -> fractalPanel.setFractal(new MandelbrotSet()));
 
 		JButton resetZoomButton = new JButton("Reset Zoom");
 		resetZoomButton.addActionListener(e -> fractalPanel.resetZoom());
@@ -34,6 +35,30 @@ public class FractalMain {
 		JButton saveButton = new JButton("Save");
 		saveButton.addActionListener(e -> fractalPanel.save());
 
+		JSlider colorSlider = new JSlider(JSlider.HORIZONTAL);
+		colorSlider.setBackground(Color.BLACK);
+		colorSlider.setMinimum(2);
+		colorSlider.setMaximum(50);
+		colorSlider.setSnapToTicks(true);
+		colorSlider.setMinorTickSpacing(1);
+		colorSlider.setPaintTicks(true);
+		colorSlider.setPaintLabels(true);
+		colorSlider.setSnapToTicks(true);
+		colorSlider.setValue(JuliaColorer.DEFAULT_NUMBER_OF_COLORS);
+		colorSlider.addChangeListener(e -> fractalPanel.setNumberOfColors(colorSlider.getValue()));
+
+		JSlider distanceSlider = new JSlider(JSlider.HORIZONTAL);
+		distanceSlider.setBackground(Color.BLACK);
+		distanceSlider.setMinimum(1);
+		distanceSlider.setMaximum(100);
+		distanceSlider.setSnapToTicks(true);
+		distanceSlider.setMinorTickSpacing(1);
+		distanceSlider.setPaintTicks(true);
+		distanceSlider.setPaintLabels(true);
+		distanceSlider.setSnapToTicks(true);
+		distanceSlider.setValue(JuliaColorer.DEFAULT_DISTANCE_BETWEEN_COLORS);
+		distanceSlider.addChangeListener(e -> fractalPanel.setDistanceBetweenColors(distanceSlider.getValue()));
+
 		JPanel buttonPanel = new JPanel(new FlowLayout());
 		buttonPanel.setBackground(Color.BLACK);
 		buttonPanel.add(saveButton);
@@ -41,13 +66,15 @@ public class FractalMain {
 		buttonPanel.add(complexNumberField);
 		buttonPanel.add(resetZoomButton);
 		buttonPanel.add(resetColorButton);
+		buttonPanel.add(colorSlider);
+		buttonPanel.add(distanceSlider);
 
 		JPanel glassPanel = new JPanel(new BorderLayout());
 		glassPanel.add(buttonPanel, BorderLayout.NORTH);
 
 		JFrame mainFrame = new JFrame();
 		mainFrame.setTitle("Mandelbrot");
-		mainFrame.setSize(729, 729);
+		mainFrame.setSize(FractalPanel.DEFAULT_WIDTH, FractalPanel.DEFAULT_HEIGHT);
 		mainFrame.add(backgroundPanel);
 		mainFrame.addWindowListener(new WindowAdapter() {
 			@Override

@@ -117,7 +117,17 @@ public class JuliaImageDrawerDelegate {
 	}
 
 	public void resetColor() {
-		JuliaColorer.setColorPalette();
+		JuliaColorer.resetColors();
+		needsNewImage = true;
+	}
+
+	public void setNumberOfColors(int numberOfColors) {
+		JuliaColorer.setNumberOfColors(numberOfColors);
+		needsNewImage = true;
+	}
+
+	public void setDistanceBetweenColors(int distanceBetweenColors) {
+		JuliaColorer.setDistanceBetweenColors(distanceBetweenColors);
 		needsNewImage = true;
 	}
 

@@ -14,6 +14,9 @@ import javax.swing.*;
 import julia.JuliaImageDrawerDelegate;
 
 public class FractalPanel extends JPanel {
+	public static int DEFAULT_WIDTH = 1000;
+	public static int DEFAULT_HEIGHT = DEFAULT_WIDTH * 9 / 16;
+
 	private static final int FRAMES_PER_MILLI = (int) ((1.0 / 60) * 1000);
 
 	private JuliaImageDrawerDelegate delegate;
@@ -21,7 +24,7 @@ public class FractalPanel extends JPanel {
 
 	public FractalPanel(Fractal fractal) {
 		setBackground(Color.BLACK);
-		setSize(729, 729);
+		setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
 		delegate = new JuliaImageDrawerDelegate(getWidth(), getHeight(), fractal);
 
@@ -59,7 +62,15 @@ public class FractalPanel extends JPanel {
 		delegate.resetColor();
 	}
 
-	public void setJulia(Fractal fractal) {
+	public void setNumberOfColors(int numberOfColors) {
+		delegate.setNumberOfColors(numberOfColors);
+	}
+
+	public void setDistanceBetweenColors(int distanceBetweenColors) {
+		delegate.setDistanceBetweenColors(distanceBetweenColors);
+	}
+
+	public void setFractal(Fractal fractal) {
 		delegate.setFractal(fractal);
 	}
 

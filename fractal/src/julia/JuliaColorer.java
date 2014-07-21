@@ -8,18 +8,73 @@ import java.util.*;
 import java.util.stream.*;
 
 public class JuliaColorer {
-	private static Random r = new Random();
-	private static double sq_3 = Math.sqrt(3);
+	public static int DEFAULT_NUMBER_OF_COLORS = 5;
+	public static int DEFAULT_DISTANCE_BETWEEN_COLORS = 50;
 
-	private static Map<Integer, Color> colorPalette = new HashMap<Integer, Color>();
-	private static int size = 1;
+	private static Random r = new Random();
+
+	private static List<Color> baseColors = new ArrayList<>();
+	private static List<Color> colors = new ArrayList<>();
+	private static int numberOfColors = DEFAULT_NUMBER_OF_COLORS;
+	private static int distanceBetweenColors = DEFAULT_DISTANCE_BETWEEN_COLORS;
+
+	public static void resetColors() {
+		baseColors.clear();
+		for (int i = 0; i < numberOfColors; ++i) {
+			baseColors.add(new Color(r.nextInt(255), r.nextInt(255), r.nextInt(255)));
+		}
+		setColors(numberOfColors, distanceBetweenColors, true);
+	}
+
+	public static void setNumberOfColors(int cols) {
+		setColors(cols, distanceBetweenColors, true);
+	}
+
+	public static void setDistanceBetweenColors(int dist) {
+		setColors(numberOfColors, dist, false);
+	}
+
+	public static void setColors(int cols, int dist, boolean resetBaseColors) {
+		if (resetBaseColors) {
+			int diff = cols - baseColors.size();
+			if (diff > 0) {
+				for (int i = 0; i < diff; ++i) {
+					baseColors.add(new Color(r.nextInt(255), r.nextInt(255), r.nextInt(255)));
+				}
+			} else if (diff < 0) {
+				for (int i = 0; i < -diff; ++i) {
+					baseColors.remove(baseColors.size() - 1);
+				}
+			}
+		}
+
+		colors.clear();
+		for (int i = 0; i < baseColors.size(); ++i) {
+			Color currentColor = baseColors.get(i);
+			Color nextColor = baseColors.get((i + 1) % baseColors.size());
+
+			int currentRed = currentColor.getRed();
+			int currentGreen = currentColor.getGreen();
+			int currentBlue = currentColor.getBlue();
+
+			int dRed = (nextColor.getRed() - currentRed) / dist;
+			int dGreen = (nextColor.getGreen() - currentGreen) / dist;
+			int dBlue = (nextColor.getBlue() - currentBlue) / dist;
+
+			for (int d = 0; d < dist; ++d) {
+				colors.add(new Color(currentRed + d * dRed, currentGreen + d * dGreen, currentBlue + d * dBlue));
+			}
+		}
+		numberOfColors = cols;
+		distanceBetweenColors = dist;
+	}
 
 	public static Color getColor(int iterations) {
-		if (iterations > Fractal.MAX_ITERATIONS - 1) {
+		if (iterations > Fractal.MAX_ITERATIONS - 1 || colors.size() == 0) {
 			return Color.BLACK;
 		}
 
-		return colorPalette.get(iterations % size);
+		return colors.get(iterations % colors.size());
 	}
 
 	public static Color getColor(int[] iterations) {
@@ -31,6 +86,7 @@ public class JuliaColorer {
 		for (int i : iterations) {
 			Color c = getColor(i);
 			if (c == null) {
+				// Not thread safe
 				return Color.BLACK;
 			}
 			red += c.getRed();
@@ -40,42 +96,5 @@ public class JuliaColorer {
 		}
 
 		return new Color((int) ((float) red / count), (int) ((float) green / count), (int) ((float) blue / count));
-	}
-
-	public static void setColorPalette() {
-		colorPalette.clear();
-		colorPalette.put(0, Color.BLACK);
-
-		List<Color> sortedRandomColors = null;
-		int shading = r.nextInt(96) + 32;
-
-		sortedRandomColors = IntStream.range(0, r.nextInt(1000) + 1).parallel()
-				.mapToObj(i -> new Color(r.nextInt(255 - shading) + shading, r.nextInt(255 - shading) + shading, r.nextInt(255 - shading) + shading))
-				.sorted((c1, c2) -> -(BigDecimal.valueOf(getHue(c1)).compareTo(BigDecimal.valueOf(getHue(c2))))).collect(Collectors.toList());
-
-		int numOfCols = r.nextInt(6) + 1;
-		int dColor = shading / numOfCols;
-
-		for (int i = 1; i < sortedRandomColors.size(); i += numOfCols) {
-			Color color = sortedRandomColors.get(i);
-			colorPalette.put(i, color);
-
-			int red = color.getRed();
-			int green = color.getGreen();
-			int blue = color.getBlue();
-
-			for (int j = 0; j < numOfCols; ++j) {
-				colorPalette.put(i + j, new Color(red - dColor * j, green - dColor * j, blue - dColor * j));
-			}
-		}
-
-		size = colorPalette.size();
-	}
-
-	private static double getHue(Color c) {
-		int r = c.getRed();
-		int g = c.getGreen();
-		int b = c.getBlue();
-		return Math.atan2(sq_3 * (g - b), 2 * r - g - b);
 	}
 }
