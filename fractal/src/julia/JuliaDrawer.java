@@ -106,7 +106,7 @@ public class JuliaDrawer {
 	public boolean isSlowerThan(JuliaDrawer slowest) {
 		return (pixelPerData > slowest.pixelPerData)
 				|| (pixelPerData == slowest.pixelPerData && getImageHeight() > slowest.getImageHeight())
-				|| (getImageHeight() == slowest.getImageHeight() && getImageWidth() < slowest.getImageWidth());
+				|| (getImageHeight() == slowest.getImageHeight() && currentX < slowest.currentX);
 	}
 
 	public boolean isSplittable() {

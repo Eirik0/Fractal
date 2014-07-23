@@ -3,9 +3,7 @@ package julia;
 import gui.FractalMain.Fractal;
 
 import java.awt.Color;
-import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.*;
 
 public class JuliaColorer {
 	public static int DEFAULT_NUMBER_OF_COLORS = 5;
@@ -57,12 +55,12 @@ public class JuliaColorer {
 			int currentGreen = currentColor.getGreen();
 			int currentBlue = currentColor.getBlue();
 
-			int dRed = (nextColor.getRed() - currentRed) / dist;
-			int dGreen = (nextColor.getGreen() - currentGreen) / dist;
-			int dBlue = (nextColor.getBlue() - currentBlue) / dist;
+			double dRed = (double) (nextColor.getRed() - currentRed) / dist;
+			double dGreen = (double) (nextColor.getGreen() - currentGreen) / dist;
+			double dBlue = (double) (nextColor.getBlue() - currentBlue) / dist;
 
 			for (int d = 0; d < dist; ++d) {
-				colors.add(new Color(currentRed + d * dRed, currentGreen + d * dGreen, currentBlue + d * dBlue));
+				colors.add(new Color((int) (currentRed + d * dRed), (int) (currentGreen + d * dGreen), (int) (currentBlue + d * dBlue)));
 			}
 		}
 		numberOfColors = cols;
