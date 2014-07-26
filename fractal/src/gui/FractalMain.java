@@ -21,7 +21,7 @@ public class FractalMain {
 		divisorLabel.setForeground(Color.GREEN);
 
 		ComplexNumberField complexNumberField = new ComplexNumberField(fractalPanel);
-		complexNumberField.setText("-0.1, 0.651");
+		complexNumberField.setText("-0.1+0.651i");
 
 		JButton resetZoomButton = new JButton("Reset Zoom");
 		resetZoomButton.addActionListener(e -> fractalPanel.resetZoom());
@@ -38,29 +38,12 @@ public class FractalMain {
 		JSlider distanceSlider = createSlider(1, 100, JuliaColorer.DEFAULT_DISTANCE_BETWEEN_COLORS);
 		distanceSlider.addChangeListener(e -> fractalPanel.setDistanceBetweenColors(distanceSlider.getValue()));
 
-		JPanel buttonPanel = new JPanel(new FlowLayout());
-		buttonPanel.setBackground(Color.BLACK);
-		buttonPanel.add(saveButton);
-		buttonPanel.add(divisorLabel);
-		buttonPanel.add(complexNumberField);
-		buttonPanel.add(resetZoomButton);
-		buttonPanel.add(resetColorButton);
-		buttonPanel.add(colorSlider);
-		buttonPanel.add(distanceSlider);
+		JPanel buttonPanel = createButtonPanel(saveButton, divisorLabel, complexNumberField, resetZoomButton, resetColorButton, colorSlider, distanceSlider);
 
 		JPanel glassPanel = new JPanel(new BorderLayout());
 		glassPanel.add(buttonPanel, BorderLayout.NORTH);
 
-		JFrame mainFrame = new JFrame();
-		mainFrame.setTitle("Mandelbrot");
-		mainFrame.setSize(FractalPanel.DEFAULT_WIDTH, FractalPanel.DEFAULT_HEIGHT);
-		mainFrame.add(backgroundPanel);
-		mainFrame.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
+		JFrame mainFrame = createMainFrame(backgroundPanel);
 
 		JPanel glassPane = (JPanel) mainFrame.getGlassPane();
 		glassPane.add(glassPanel);
@@ -81,6 +64,29 @@ public class FractalMain {
 		slider.setSnapToTicks(true);
 		slider.setValue(defaultVlue);
 		return slider;
+	}
+
+	private static JPanel createButtonPanel(Component... buttons) {
+		JPanel buttonPanel = new JPanel(new FlowLayout());
+		buttonPanel.setBackground(Color.BLACK);
+		for (Component button : buttons) {
+			buttonPanel.add(button);
+		}
+		return buttonPanel;
+	}
+
+	private static JFrame createMainFrame(JPanel backgroundPanel) {
+		JFrame mainFrame = new JFrame();
+		mainFrame.setTitle("Mandelbrot");
+		mainFrame.setSize(FractalPanel.DEFAULT_WIDTH, FractalPanel.DEFAULT_HEIGHT);
+		mainFrame.add(backgroundPanel);
+		mainFrame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				System.exit(0);
+			}
+		});
+		return mainFrame;
 	}
 
 	public static interface Fractal {
