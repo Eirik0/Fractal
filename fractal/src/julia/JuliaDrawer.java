@@ -1,11 +1,11 @@
 package julia;
 
-import gui.FractalMain.Fractal;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
+
+import julia.Fractals.Fractal;
 
 public class JuliaDrawer {
 	private static final int INITIAL_PIXEL_PER_DATA = 32;

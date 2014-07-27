@@ -1,7 +1,5 @@
 package julia;
 
-import gui.FractalMain.Fractal;
-
 import java.awt.Color;
 import java.util.*;
 
@@ -68,7 +66,7 @@ public class JuliaColorer {
 	}
 
 	public static Color getColor(int iterations) {
-		if (iterations > Fractal.MAX_ITERATIONS - 1 || colors.size() == 0) {
+		if (iterations > Fractals.MAX_ITERATIONS - 1 || colors.size() == 0) {
 			return Color.BLACK;
 		}
 

@@ -1,10 +1,10 @@
 package julia;
 
-import gui.FractalMain.Fractal;
-
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.*;
+
+import julia.Fractals.Fractal;
 
 public class JuliaImageDrawerDelegate {
 	private Fractal juliaSet;

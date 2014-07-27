@@ -1,12 +1,12 @@
 package gui;
 
-import gui.FractalMain.Fractal;
-import gui.FractalMain.JuliaSet;
-import gui.FractalMain.MandelbrotSet;
-
 import java.awt.Color;
 
 import javax.swing.JTextField;
+
+import julia.Fractals.Fractal;
+import julia.Fractals.JuliaSet;
+import julia.Fractals.MandelbrotSet;
 
 public class ComplexNumberField extends JTextField {
 	public ComplexNumberField(FractalPanel fractalPanel) {
@@ -43,7 +43,11 @@ public class ComplexNumberField extends JTextField {
 							splitText = splitText.substring(1);
 						}
 
-						if (splitText.contains("+")) {
+						if (splitText.endsWith("-")) {
+							return new JuliaSet(realSign * Double.parseDouble(splitText.substring(0, splitText.length() - 1)), -1);
+						} else if (splitText.endsWith("+")) {
+							return new JuliaSet(realSign * Double.parseDouble(splitText.substring(0, splitText.length() - 1)), 1);
+						} else if (splitText.contains("+")) {
 							String[] nextSplit = splitText.split("[+]");
 							return new JuliaSet(realSign * Double.parseDouble(nextSplit[0]), Double.parseDouble(nextSplit[1]));
 						} else if (splitText.contains("-")) {

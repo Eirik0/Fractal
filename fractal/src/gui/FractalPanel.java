@@ -1,7 +1,5 @@
 package gui;
 
-import gui.FractalMain.Fractal;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -11,7 +9,8 @@ import java.util.concurrent.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import julia.JuliaImageDrawerDelegate;
+import julia.Fractals.Fractal;
+import julia.*;
 
 public class FractalPanel extends JPanel {
 	public static int DEFAULT_WIDTH = 1000;
