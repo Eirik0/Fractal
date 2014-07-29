@@ -48,17 +48,14 @@ public class JuliaImageDrawerDelegate {
 		double width = (double) imageWidth / horizontalDrawers;
 		double height = (double) imageHeight / verticalDrawers;
 
-		for (int x = 0; x < horizontalDrawers; ++x) {
-			for (int y = 0; y < verticalDrawers; ++y) {
-				double x0 = x * width;
-				double x1 = x0 + width;
+		for (double x = 0; x < imageWidth; x += width) {
+			for (double y = 0; y < imageHeight; y += height) {
+				int x0 = (int) Math.round(x);
+				int y0 = (int) Math.round(y);
+				int x1 = (int) Math.round(x + width);
+				int y1 = (int) Math.round(y + height);
 
-				double y0 = y * height;
-				double y1 = y0 + height;
-
-				BufferedImage subimage = currentImage.getSubimage((int) x0, (int) y0, (int) width, (int) height);
-
-				drawers.add(new JuliaDrawer(subimage, juliaSet, sizer, (int) x0, (int) y0, (int) x1, (int) y1));
+				drawers.add(new JuliaDrawer(currentImage.getSubimage(x0, y0, x1 - x0, y1 - y0), juliaSet, sizer, x0, y0, x1, y1));
 			}
 		}
 	}
