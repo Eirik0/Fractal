@@ -39,8 +39,10 @@ public class JuliaImageDrawerDelegate {
 		drawers.clear();
 
 		if (currentImage.getWidth() != imageWidth || currentImage.getHeight() != imageHeight) {
+			BufferedImage oldImage = currentImage;
 			currentImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
 			currentGraphics = currentImage.createGraphics();
+			currentGraphics.drawImage(oldImage, (imageWidth - oldImage.getWidth()) / 2, (imageHeight - oldImage.getHeight()) / 2, null);
 		}
 
 		double width = (double) imageWidth / horizontalDrawers;
