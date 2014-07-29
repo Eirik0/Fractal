@@ -122,17 +122,12 @@ public class JuliaDrawer {
 	public List<JuliaDrawer> splitVertically() {
 		requestStop();
 
-		int newHeight = getImageHeight() / 2;
-		int newWidth = getImageWidth();
-
-		int midpoint = y0 + newHeight;
-
-		BufferedImage top = splitImage(0, 0, newWidth, newHeight);
-		BufferedImage bottom = splitImage(0, newHeight, newWidth, getImageHeight() - newHeight);
+		BufferedImage top = splitImage(0, 0, getImageWidth(), getImageHeight() / 2);
+		BufferedImage bottom = splitImage(0, getImageHeight() / 2, getImageWidth(), getImageHeight() - (getImageHeight() / 2));
 
 		List<JuliaDrawer> drawers = new ArrayList<>();
-		drawers.add(new JuliaDrawer(top, julia, sizer, x0, y0, x1, midpoint, pixelPerData, currentX));
-		drawers.add(new JuliaDrawer(bottom, julia, sizer, x0, midpoint, x1, y1, pixelPerData, currentX));
+		drawers.add(new JuliaDrawer(top, julia, sizer, x0, y0, x1, y0 + getImageHeight() / 2, pixelPerData, currentX));
+		drawers.add(new JuliaDrawer(bottom, julia, sizer, x0, y0 + getImageHeight() / 2, x1, y1, pixelPerData, currentX));
 
 		return drawers;
 	}
