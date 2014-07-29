@@ -3,10 +3,13 @@ package julia;
 public class JuliaSizer {
 	private double x0;
 	private double y0;
+
 	private double juliaWidth;
 	private double juliaHeight;
+
 	private int imageWidth;
 	private int imageHeight;
+
 	// Cached division enforced through setScale()
 	private double scaleX;
 	private double scaleY;
@@ -53,12 +56,10 @@ public class JuliaSizer {
 		double dx = (double) width / imageWidth;
 		double dy = (double) height / imageHeight;
 		// center
-		setJuliaBounds(x0 + juliaWidth * (1 - dx) / 2, y0 + juliaHeight * (1 - dy) / 2, juliaWidth * dx, juliaHeight * dy);
-
 		imageWidth = width;
 		imageHeight = height;
 
-		setScale();
+		setJuliaBounds(x0 + juliaWidth * (1 - dx) / 2, y0 + juliaHeight * (1 - dy) / 2, juliaWidth * dx, juliaHeight * dy);
 	}
 
 	public void setJuliaBounds(double x0, double y0, double width, double height) {
