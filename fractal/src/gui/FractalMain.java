@@ -20,23 +20,17 @@ public class FractalMain {
 		JButton saveButton = new JButton("Save");
 		saveButton.addActionListener(e -> fractalPanel.save());
 
-		JLabel complexLabel = new JLabel("a + bi: ");
-		complexLabel.setBackground(Color.BLACK);
-		complexLabel.setForeground(Color.GREEN);
+		JLabel complexLabel = createLabel("a + bi: ");
 
 		ComplexNumberField complexField = new ComplexNumberField(fractalPanel);
-		complexField.setText("-0.1+0.651i");
+		complexField.setText("-0.1 + 0.651i");
 
-		JLabel colorLabel = new JLabel("colors: ");
-		colorLabel.setBackground(Color.BLACK);
-		colorLabel.setForeground(Color.GREEN);
+		JLabel colorLabel = createLabel("colors: ");
 
 		JSlider colorSlider = createSlider(2, 50, JuliaColorer.DEFAULT_NUMBER_OF_COLORS);
 		colorSlider.addChangeListener(e -> fractalPanel.setNumberOfColors(colorSlider.getValue()));
 
-		JLabel gradientLabel = new JLabel("gradient: ");
-		gradientLabel.setBackground(Color.BLACK);
-		gradientLabel.setForeground(Color.GREEN);
+		JLabel gradientLabel = createLabel("gradient: ");
 
 		JSlider gradientSlider = createSlider(1, 100, JuliaColorer.DEFAULT_DISTANCE_BETWEEN_COLORS);
 		gradientSlider.addChangeListener(e -> fractalPanel.setDistanceBetweenColors(gradientSlider.getValue()));
@@ -60,6 +54,13 @@ public class FractalMain {
 		glassPane.setVisible(true);
 
 		mainFrame.setVisible(true);
+	}
+
+	private static JLabel createLabel(String title) {
+		JLabel label = new JLabel(title);
+		label.setBackground(Color.BLACK);
+		label.setForeground(Color.GREEN);
+		return label;
 	}
 
 	private static JSlider createSlider(int minimum, int maximum, int defaultVlue) {
