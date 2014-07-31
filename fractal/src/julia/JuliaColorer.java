@@ -9,6 +9,7 @@ public class JuliaColorer {
 
 	private static List<Color> baseColors = new ArrayList<>();
 	private static List<Color> colors = new ArrayList<>();
+
 	private static int numberOfColors = DEFAULT_NUMBER_OF_COLORS;
 	private static int distanceBetweenColors = DEFAULT_DISTANCE_BETWEEN_COLORS;
 
@@ -42,7 +43,7 @@ public class JuliaColorer {
 			}
 		}
 
-		colors.clear();
+		ArrayList<Color> newColors = new ArrayList<>();
 		for (int i = 0; i < baseColors.size(); ++i) {
 			Color currentColor = baseColors.get(i);
 			Color nextColor = baseColors.get((i + 1) % baseColors.size());
@@ -56,9 +57,11 @@ public class JuliaColorer {
 			double dBlue = (double) (nextColor.getBlue() - currentBlue) / dist;
 
 			for (int d = 0; d < dist; ++d) {
-				colors.add(new Color((int) (currentRed + d * dRed), (int) (currentGreen + d * dGreen), (int) (currentBlue + d * dBlue)));
+				newColors.add(new Color((int) (currentRed + d * dRed), (int) (currentGreen + d * dGreen), (int) (currentBlue + d * dBlue)));
 			}
 		}
+
+		colors = newColors;
 		numberOfColors = cols;
 		distanceBetweenColors = dist;
 	}
@@ -83,10 +86,7 @@ public class JuliaColorer {
 
 		for (int i : iterations) {
 			Color c = getColor(i);
-			if (c == null) {
-				// Not thread safe
-				return Color.BLACK;
-			}
+
 			red += c.getRed();
 			green += c.getGreen();
 			blue += c.getBlue();
