@@ -9,7 +9,7 @@ import java.util.concurrent.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import julia.JuliaImageDrawerDelegate;
+import julia.*;
 
 public class FractalPanel extends JPanel {
 	private static final int FRAMES_PER_MILLI = (int) ((1.0 / 60) * 1000);
@@ -25,12 +25,13 @@ public class FractalPanel extends JPanel {
 			@Override
 			public void componentResized(ComponentEvent e) {
 				if (getWidth() > 0 && getHeight() > 0) {
-					delegate.setImageDimensions(getWidth(), getHeight());
+					JuliaSizer.setImageDimensions(getWidth(), getHeight());
+					delegate.requestReset();
 				}
 			}
 		});
 
-		addMouseWheelListener(e -> delegate.zoom(e.getWheelRotation()));
+		addMouseWheelListener(mouseAdapter);
 		addMouseListener(mouseAdapter);
 		addMouseMotionListener(mouseAdapter);
 
@@ -47,6 +48,7 @@ public class FractalPanel extends JPanel {
 
 		if (mouseAdapter.isDragging()) {
 			g.setColor(Color.RED);
+			// TODO draw predicted square with static sizer
 			g.drawRect(mouseAdapter.getDragUpperLeftX(), mouseAdapter.getDragUpperLeftY(), mouseAdapter.getWidth(), mouseAdapter.getHeight());
 		}
 	}

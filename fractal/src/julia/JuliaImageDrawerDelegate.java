@@ -60,6 +60,15 @@ public class JuliaImageDrawerDelegate {
 		}
 	}
 
+	public void setFractal(Fractal fractal) {
+		juliaSet = fractal;
+		needsNewImage = true;
+	}
+
+	public void requestReset() {
+		needsNewImage = true;
+	}
+
 	public BufferedImage requestImage() {
 		if (needsNewImage) {
 			needsNewImage = false;
@@ -87,48 +96,6 @@ public class JuliaImageDrawerDelegate {
 		}
 
 		return currentImage;
-	}
-
-	// Sizer
-	public void setImageDimensions(int width, int height) {
-		JuliaSizer.setImageDimensions(width, height);
-		needsNewImage = true;
-	}
-
-	public void resetZoom() {
-		JuliaSizer.setJuliaBounds(-2.5, -2.5, 5, 5);
-		needsNewImage = true;
-	}
-
-	public void zoom(int rotations) {
-		JuliaSizer.zoom(rotations);
-		needsNewImage = true;
-	}
-
-	public void zoomTo(double ul_x, double ul_y, double br_x, double br_y) {
-		JuliaSizer.zoomTo(ul_x, ul_y, br_x, br_y);
-		needsNewImage = true;
-	}
-
-	// Other methods
-	public void setFractal(Fractal fractal) {
-		juliaSet = fractal;
-		needsNewImage = true;
-	}
-
-	public void resetColor() {
-		JuliaColorer.resetColors();
-		needsNewImage = true;
-	}
-
-	public void setNumberOfColors(int numberOfColors) {
-		JuliaColorer.setNumberOfColors(numberOfColors);
-		needsNewImage = true;
-	}
-
-	public void setDistanceBetweenColors(int distanceBetweenColors) {
-		JuliaColorer.setDistanceBetweenColors(distanceBetweenColors);
-		needsNewImage = true;
 	}
 
 	private void checkSplit() {

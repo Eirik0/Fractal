@@ -19,8 +19,10 @@ public class FractalMain {
 	public static void main(String[] args) {
 		JuliaImageDrawerDelegate delegate = new JuliaImageDrawerDelegate(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_FRACTAL);
 
+		FractalPanel fractalPanel = new FractalPanel(delegate);
+
 		JButton saveButton = new JButton("Save");
-		saveButton.addActionListener(e -> new FractalPanel(delegate).save());
+		saveButton.addActionListener(e -> fractalPanel.save());
 
 		JLabel complexLabel = createLabel("a + bi: ");
 
@@ -30,24 +32,36 @@ public class FractalMain {
 		JLabel colorLabel = createLabel("colors: ");
 
 		JSlider colorSlider = createSlider(2, 50, JuliaColorer.DEFAULT_NUMBER_OF_COLORS);
-		colorSlider.addChangeListener(e -> delegate.setNumberOfColors(colorSlider.getValue()));
+		colorSlider.addChangeListener(e -> {
+			JuliaColorer.setNumberOfColors(colorSlider.getValue());
+			delegate.requestReset();
+		});
 
 		JLabel gradientLabel = createLabel("gradient: ");
 
 		JSlider gradientSlider = createSlider(1, 100, JuliaColorer.DEFAULT_DISTANCE_BETWEEN_COLORS);
-		gradientSlider.addChangeListener(e -> delegate.setDistanceBetweenColors(gradientSlider.getValue()));
+		gradientSlider.addChangeListener(e -> {
+			JuliaColorer.setDistanceBetweenColors(gradientSlider.getValue());
+			delegate.requestReset();
+		});
 
 		JButton resetColorButton = new JButton("Reset Color");
-		resetColorButton.addActionListener(e -> delegate.resetColor());
+		resetColorButton.addActionListener(e -> {
+			JuliaColorer.resetColors();
+			delegate.requestReset();
+		});
 
 		JButton resetZoomButton = new JButton("Reset Zoom");
-		resetZoomButton.addActionListener(e -> delegate.resetZoom());
+		resetZoomButton.addActionListener(e -> {
+			JuliaSizer.setJuliaBounds(-2.5, -2.5, 5, 5);
+			delegate.requestReset();
+		});
 
 		JPanel buttonPanel = createButtonPanel(saveButton, complexLabel, complexField, colorLabel, colorSlider, gradientLabel, gradientSlider,
 				resetColorButton, resetZoomButton);
 
 		JFrame mainFrame = createMainFrame();
-		mainFrame.add(new FractalPanel(delegate));
+		mainFrame.add(fractalPanel);
 
 		JPanel overlayPanel = createButtonOverlay(buttonPanel, mainFrame);
 		overlayPanel.setVisible(true);

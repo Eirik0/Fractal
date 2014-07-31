@@ -2,7 +2,7 @@ package gui;
 
 import java.awt.event.*;
 
-import julia.JuliaImageDrawerDelegate;
+import julia.*;
 
 public class FractalMouseAdapter extends MouseAdapter {
 	private JuliaImageDrawerDelegate delegate;
@@ -37,9 +37,16 @@ public class FractalMouseAdapter extends MouseAdapter {
 		int br_x = dragStartX > dragEndX ? dragStartX : dragEndX;
 		int br_y = dragStartY > dragEndY ? dragStartY : dragEndY;
 
-		delegate.zoomTo(getDragUpperLeftX(), getDragUpperLeftY(), br_x, br_y);
+		JuliaSizer.zoomTo(getDragUpperLeftX(), getDragUpperLeftY(), br_x, br_y);
+		delegate.requestReset();
 
 		isDragging = false;
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		JuliaSizer.zoom(e.getWheelRotation());
+		delegate.requestReset();
 	}
 
 	public boolean isDragging() {
