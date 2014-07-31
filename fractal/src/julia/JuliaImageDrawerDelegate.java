@@ -8,7 +8,6 @@ import julia.Fractals.Fractal;
 
 public class JuliaImageDrawerDelegate {
 	private Fractal juliaSet;
-	private JuliaSizer sizer;
 
 	private final int horizontalDrawers;
 	private final int verticalDrawers;
@@ -22,10 +21,9 @@ public class JuliaImageDrawerDelegate {
 
 	public JuliaImageDrawerDelegate(int imageWidth, int imageHeight, Fractal fractal) {
 		JuliaColorer.resetColors();
+		JuliaSizer.init(-2.5, -2.5, 5, 5, imageWidth, imageHeight);
 
 		juliaSet = fractal;
-
-		sizer = new JuliaSizer(-2.5, -2.5, 5, 5, imageWidth, imageHeight);
 
 		currentImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
 		currentGraphics = currentImage.createGraphics();
@@ -57,7 +55,7 @@ public class JuliaImageDrawerDelegate {
 				int x1 = (int) Math.round(x + width);
 				int y1 = (int) Math.round(y + height);
 
-				drawers.add(new JuliaDrawer(currentImage.getSubimage(x0, y0, x1 - x0, y1 - y0), juliaSet, sizer, x0, y0, x1, y1));
+				drawers.add(new JuliaDrawer(currentImage.getSubimage(x0, y0, x1 - x0, y1 - y0), juliaSet, x0, y0, x1, y1));
 			}
 		}
 	}
@@ -78,7 +76,7 @@ public class JuliaImageDrawerDelegate {
 			drawer.requestStop();
 		}
 
-		setUpDrawers(sizer.getImageWidth(), sizer.getImageHeight());
+		setUpDrawers(JuliaSizer.getImageWidth(), JuliaSizer.getImageHeight());
 
 		return createImageFromDrawers();
 	}
@@ -93,22 +91,22 @@ public class JuliaImageDrawerDelegate {
 
 	// Sizer
 	public void setImageDimensions(int width, int height) {
-		sizer.setImageDimensions(width, height);
+		JuliaSizer.setImageDimensions(width, height);
 		needsNewImage = true;
 	}
 
 	public void resetZoom() {
-		sizer.setJuliaBounds(-2.5, -2.5, 5, 5);
+		JuliaSizer.setJuliaBounds(-2.5, -2.5, 5, 5);
 		needsNewImage = true;
 	}
 
 	public void zoom(int rotations) {
-		sizer.zoom(rotations);
+		JuliaSizer.zoom(rotations);
 		needsNewImage = true;
 	}
 
 	public void zoomTo(double ul_x, double ul_y, double br_x, double br_y) {
-		sizer.zoomTo(ul_x, ul_y, br_x, br_y);
+		JuliaSizer.zoomTo(ul_x, ul_y, br_x, br_y);
 		needsNewImage = true;
 	}
 

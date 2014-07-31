@@ -15,7 +15,6 @@ public class JuliaDrawer {
 	private Graphics2D graphics;
 
 	private Fractal julia;
-	private JuliaSizer sizer;
 
 	private boolean noStopRequested = true;
 	private boolean isDrawingComplete = false;
@@ -29,22 +28,21 @@ public class JuliaDrawer {
 	private int x1;
 	private int y1;
 
-	public JuliaDrawer(BufferedImage currentImage, Fractal julia, JuliaSizer sizer, int x0, int y0, int x1, int y1) {
-		init(julia, sizer, x0, y0, x1, y1, x0, INITIAL_PIXEL_PER_DATA);
+	public JuliaDrawer(BufferedImage currentImage, Fractal julia, int x0, int y0, int x1, int y1) {
+		init(julia, x0, y0, x1, y1, x0, INITIAL_PIXEL_PER_DATA);
 		setImage(new BufferedImage(x1 - x0, y1 - y0, BufferedImage.TYPE_INT_RGB));
 		graphics.drawImage(currentImage, 0, 0, null);
 		startDrawing();
 	}
 
-	private JuliaDrawer(BufferedImage image, Fractal julia, JuliaSizer sizer, int x0, int y0, int x1, int y1, double pixelPerData, int initialX) {
-		init(julia, sizer, x0, y0, x1, y1, initialX, pixelPerData);
+	private JuliaDrawer(BufferedImage image, Fractal julia, int x0, int y0, int x1, int y1, double pixelPerData, int initialX) {
+		init(julia, x0, y0, x1, y1, initialX, pixelPerData);
 		setImage(image);
 		startDrawing();
 	}
 
-	private void init(Fractal julia, JuliaSizer sizer, int x0, int y0, int x1, int y1, int initialX, double pixelPerData) {
+	private void init(Fractal julia, int x0, int y0, int x1, int y1, int initialX, double pixelPerData) {
 		this.julia = julia;
-		this.sizer = sizer;
 
 		this.x0 = x0;
 		this.y0 = y0;
@@ -83,10 +81,10 @@ public class JuliaDrawer {
 			int y = y0;
 			do {
 				if (pixelPerData >= 1) {
-					graphics.setColor(JuliaColorer.getColor(julia.getIterations(sizer.getX(currentX + offset), sizer.getY(y + offset))));
+					graphics.setColor(JuliaColorer.getColor(julia.getIterations(JuliaSizer.getX(currentX + offset), JuliaSizer.getY(y + offset))));
 					graphics.fillRect(currentX - x0, y - y0, width, width);
 				} else {
-					graphics.setColor(JuliaColorer.getColor(julia.getIterations(currentX, y, pixelPerData, sizer)));
+					graphics.setColor(JuliaColorer.getColor(julia.getIterations(currentX, y, pixelPerData)));
 					graphics.drawLine(currentX - x0, y - y0, currentX - x0, y - y0);
 				}
 				y += width;
@@ -127,8 +125,8 @@ public class JuliaDrawer {
 		BufferedImage bottom = splitImage(0, getImageHeight() / 2, getImageWidth(), getImageHeight() - (getImageHeight() / 2));
 
 		List<JuliaDrawer> drawers = new ArrayList<>();
-		drawers.add(new JuliaDrawer(top, julia, sizer, x0, y0, x1, y0 + getImageHeight() / 2, pixelPerData, currentX));
-		drawers.add(new JuliaDrawer(bottom, julia, sizer, x0, y0 + getImageHeight() / 2, x1, y1, pixelPerData, currentX));
+		drawers.add(new JuliaDrawer(top, julia, x0, y0, x1, y0 + getImageHeight() / 2, pixelPerData, currentX));
+		drawers.add(new JuliaDrawer(bottom, julia, x0, y0 + getImageHeight() / 2, x1, y1, pixelPerData, currentX));
 
 		return drawers;
 	}

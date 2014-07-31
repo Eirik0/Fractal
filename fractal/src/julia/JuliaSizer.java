@@ -1,57 +1,57 @@
 package julia;
 
 public class JuliaSizer {
-	private double x0;
-	private double y0;
+	private static double x0;
+	private static double y0;
 
-	private double juliaWidth;
-	private double juliaHeight;
+	private static double juliaWidth;
+	private static double juliaHeight;
 
-	private int imageWidth;
-	private int imageHeight;
+	private static int imageWidth;
+	private static int imageHeight;
 
 	// Cached division enforced through setScale()
-	private double scaleX;
-	private double scaleY;
+	private static double scaleX;
+	private static double scaleY;
 
-	public JuliaSizer(double x0, double y0, double juliaWidth, double juliaHeight, int imageWidth, int imageHeight) {
-		this.imageWidth = imageWidth;
-		this.imageHeight = imageHeight;
+	public static void init(double x0, double y0, double juliaWidth, double juliaHeight, int newImageWidth, int newImageHeight) {
+		imageWidth = newImageWidth;
+		imageHeight = newImageHeight;
 
 		setJuliaBounds(x0, y0, juliaWidth, juliaHeight);
 	}
 
-	public int getImageWidth() {
+	public static int getImageWidth() {
 		return imageWidth;
 	}
 
-	public int getImageHeight() {
+	public static int getImageHeight() {
 		return imageHeight;
 	}
 
-	public double getX(double imageX) {
+	public static double getX(double imageX) {
 		return x0 + imageX * scaleX;
 	}
 
-	public double getY(double imageY) {
+	public static double getY(double imageY) {
 		return y0 + imageY * scaleY;
 	}
 
-	public void zoom(int rotations) {
+	public static void zoom(int rotations) {
 		double dy = -(juliaHeight / 10) * rotations;
 		double dx = -(juliaWidth / 10) * rotations;
 
 		setJuliaBounds(x0 + dx, y0 + dy, juliaWidth - 2 * dx, juliaHeight - 2 * dy);
 	}
 
-	public void zoomTo(double ul_x, double ul_y, double br_x, double br_y) {
+	public static void zoomTo(double ul_x, double ul_y, double br_x, double br_y) {
 		double x = getX(ul_x);
 		double y = getY(ul_y);
 
 		setJuliaBounds(x, y, getX(br_x) - x, getY(br_y) - y);
 	}
 
-	public void setImageDimensions(int width, int height) {
+	public static void setImageDimensions(int width, int height) {
 		// This makes the bounds of the JuliaSet scale with the viewable window
 		double dx = (double) width / imageWidth;
 		double dy = (double) height / imageHeight;
@@ -62,9 +62,9 @@ public class JuliaSizer {
 		setJuliaBounds(x0 + juliaWidth * (1 - dx) / 2, y0 + juliaHeight * (1 - dy) / 2, juliaWidth * dx, juliaHeight * dy);
 	}
 
-	public void setJuliaBounds(double x0, double y0, double width, double height) {
-		this.x0 = x0;
-		this.y0 = y0;
+	public static void setJuliaBounds(double x, double y, double width, double height) {
+		x0 = x;
+		y0 = y;
 
 		juliaWidth = width;
 		juliaHeight = height;
@@ -76,12 +76,12 @@ public class JuliaSizer {
 		// TODO scale height sometimes ?
 		juliaWidth *= (imageAspectRatio / juliaAspectRatio);
 
-		this.x0 -= (juliaWidth - width) / 2;
+		x0 -= (juliaWidth - width) / 2;
 
 		setScale();
 	}
 
-	private void setScale() {
+	private static void setScale() {
 		scaleX = juliaWidth / imageWidth;
 		scaleY = juliaHeight / imageHeight;
 	}
