@@ -5,53 +5,52 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import julia.Fractals.Fractal;
 import julia.Fractals.JuliaSet;
 import julia.*;
 
 public class FractalMain {
+	private static final Fractal DEFAULT_FRACTAL = new JuliaSet(-0.1, 0.651);
+	private static final String DEFAULT_TEXT = "-0.1 + 0.651i";
+
+	private static final int DEFAULT_WIDTH = 1000;
+	private static final int DEFAULT_HEIGHT = DEFAULT_WIDTH * 9 / 16;
+
 	public static void main(String[] args) {
-		JuliaColorer.resetColors();
-
-		FractalPanel fractalPanel = new FractalPanel(new JuliaSet(-0.1, 0.651));
-
-		JPanel backgroundPanel = new JPanel(new BorderLayout());
-		backgroundPanel.add(fractalPanel, BorderLayout.CENTER);
+		JuliaImageDrawerDelegate delegate = new JuliaImageDrawerDelegate(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_FRACTAL);
 
 		JButton saveButton = new JButton("Save");
-		saveButton.addActionListener(e -> fractalPanel.save());
+		saveButton.addActionListener(e -> new FractalPanel(delegate).save());
 
 		JLabel complexLabel = createLabel("a + bi: ");
 
-		ComplexNumberField complexField = new ComplexNumberField(fractalPanel);
-		complexField.setText("-0.1 + 0.651i");
+		ComplexNumberField complexField = new ComplexNumberField(delegate);
+		complexField.setText(DEFAULT_TEXT);
 
 		JLabel colorLabel = createLabel("colors: ");
 
 		JSlider colorSlider = createSlider(2, 50, JuliaColorer.DEFAULT_NUMBER_OF_COLORS);
-		colorSlider.addChangeListener(e -> fractalPanel.setNumberOfColors(colorSlider.getValue()));
+		colorSlider.addChangeListener(e -> delegate.setNumberOfColors(colorSlider.getValue()));
 
 		JLabel gradientLabel = createLabel("gradient: ");
 
 		JSlider gradientSlider = createSlider(1, 100, JuliaColorer.DEFAULT_DISTANCE_BETWEEN_COLORS);
-		gradientSlider.addChangeListener(e -> fractalPanel.setDistanceBetweenColors(gradientSlider.getValue()));
+		gradientSlider.addChangeListener(e -> delegate.setDistanceBetweenColors(gradientSlider.getValue()));
 
 		JButton resetColorButton = new JButton("Reset Color");
-		resetColorButton.addActionListener(e -> fractalPanel.resetColor());
+		resetColorButton.addActionListener(e -> delegate.resetColor());
 
 		JButton resetZoomButton = new JButton("Reset Zoom");
-		resetZoomButton.addActionListener(e -> fractalPanel.resetZoom());
+		resetZoomButton.addActionListener(e -> delegate.resetZoom());
 
 		JPanel buttonPanel = createButtonPanel(saveButton, complexLabel, complexField, colorLabel, colorSlider, gradientLabel, gradientSlider,
 				resetColorButton, resetZoomButton);
 
-		JPanel glassPanel = new JPanel(new BorderLayout());
-		glassPanel.add(buttonPanel, BorderLayout.NORTH);
+		JFrame mainFrame = createMainFrame();
+		mainFrame.add(new FractalPanel(delegate));
 
-		JFrame mainFrame = createMainFrame(backgroundPanel);
-
-		JPanel glassPane = (JPanel) mainFrame.getGlassPane();
-		glassPane.add(glassPanel);
-		glassPane.setVisible(true);
+		JPanel overlayPanel = createButtonOverlay(buttonPanel, mainFrame);
+		overlayPanel.setVisible(true);
 
 		mainFrame.setVisible(true);
 	}
@@ -86,11 +85,10 @@ public class FractalMain {
 		return buttonPanel;
 	}
 
-	private static JFrame createMainFrame(JPanel backgroundPanel) {
+	private static JFrame createMainFrame() {
 		JFrame mainFrame = new JFrame();
-		mainFrame.setTitle("Mandelbrot");
-		mainFrame.setSize(FractalPanel.DEFAULT_WIDTH, FractalPanel.DEFAULT_HEIGHT);
-		mainFrame.add(backgroundPanel);
+		mainFrame.setTitle("Fractals");
+		mainFrame.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 		mainFrame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -98,5 +96,13 @@ public class FractalMain {
 			}
 		});
 		return mainFrame;
+	}
+
+	private static JPanel createButtonOverlay(JPanel buttonPanel, JFrame mainFrame) {
+		JPanel glassPane = (JPanel) mainFrame.getGlassPane();
+		JPanel glassPanel = new JPanel(new BorderLayout());
+		glassPanel.add(buttonPanel, BorderLayout.NORTH);
+		glassPane.add(glassPanel);
+		return glassPane;
 	}
 }

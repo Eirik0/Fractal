@@ -21,6 +21,8 @@ public class JuliaImageDrawerDelegate {
 	Graphics2D currentGraphics;
 
 	public JuliaImageDrawerDelegate(int imageWidth, int imageHeight, Fractal fractal) {
+		JuliaColorer.resetColors();
+
 		juliaSet = fractal;
 
 		sizer = new JuliaSizer(-2.5, -2.5, 5, 5, imageWidth, imageHeight);

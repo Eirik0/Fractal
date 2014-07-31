@@ -7,11 +7,12 @@ import javax.swing.JTextField;
 import julia.Fractals.Fractal;
 import julia.Fractals.JuliaSet;
 import julia.Fractals.MandelbrotSet;
+import julia.*;
 
 public class ComplexNumberField extends JTextField {
-	public ComplexNumberField(FractalPanel fractalPanel) {
+	public ComplexNumberField(JuliaImageDrawerDelegate delegate) {
 		setColumns(10);
-		addActionListener(e -> fractalPanel.setFractal(textToFractal(getText())));
+		addActionListener(e -> delegate.setFractal(textToFractal(getText())));
 	}
 
 	public Fractal textToFractal(String text) {

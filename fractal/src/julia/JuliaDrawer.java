@@ -84,10 +84,11 @@ public class JuliaDrawer {
 			do {
 				if (pixelPerData >= 1) {
 					graphics.setColor(JuliaColorer.getColor(julia.getIterations(sizer.getX(currentX + offset), sizer.getY(y + offset))));
+					graphics.fillRect(currentX - x0, y - y0, width, width);
 				} else {
 					graphics.setColor(JuliaColorer.getColor(julia.getIterations(currentX, y, pixelPerData, sizer)));
+					graphics.drawLine(currentX - x0, y - y0, currentX - x0, y - y0);
 				}
-				graphics.fillRect(currentX - x0, y - y0, width, width);
 				y += width;
 			} while (noStopRequested && y < y1);
 			if (noStopRequested) {

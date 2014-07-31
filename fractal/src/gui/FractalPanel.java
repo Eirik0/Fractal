@@ -9,33 +9,18 @@ import java.util.concurrent.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import julia.Fractals.Fractal;
-import julia.*;
+import julia.JuliaImageDrawerDelegate;
 
 public class FractalPanel extends JPanel {
-	public static int DEFAULT_WIDTH = 1000;
-	public static int DEFAULT_HEIGHT = DEFAULT_WIDTH * 9 / 16;
-
 	private static final int FRAMES_PER_MILLI = (int) ((1.0 / 60) * 1000);
 
 	private JuliaImageDrawerDelegate delegate;
 	private FractalMouseAdapter mouseAdapter;
 
-	public FractalPanel(Fractal fractal) {
-		setBackground(Color.BLACK);
-		setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-
-		delegate = new JuliaImageDrawerDelegate(getWidth(), getHeight(), fractal);
-
+	FractalPanel(JuliaImageDrawerDelegate delegate) {
+		this.delegate = delegate;
 		mouseAdapter = new FractalMouseAdapter(delegate);
 
-		addListeners();
-
-		Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> repaint(), 0, FRAMES_PER_MILLI, TimeUnit.MILLISECONDS);
-	}
-
-	private void addListeners() {
-		// resize
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
@@ -45,32 +30,11 @@ public class FractalPanel extends JPanel {
 			}
 		});
 
-		// mouse wheel
 		addMouseWheelListener(e -> delegate.zoom(e.getWheelRotation()));
-		// mouse pressed / released
 		addMouseListener(mouseAdapter);
-		// mouse dragging
 		addMouseMotionListener(mouseAdapter);
-	}
 
-	public void resetZoom() {
-		delegate.resetZoom();
-	}
-
-	public void resetColor() {
-		delegate.resetColor();
-	}
-
-	public void setNumberOfColors(int numberOfColors) {
-		delegate.setNumberOfColors(numberOfColors);
-	}
-
-	public void setDistanceBetweenColors(int distanceBetweenColors) {
-		delegate.setDistanceBetweenColors(distanceBetweenColors);
-	}
-
-	public void setFractal(Fractal fractal) {
-		delegate.setFractal(fractal);
+		Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> repaint(), 0, FRAMES_PER_MILLI, TimeUnit.MILLISECONDS);
 	}
 
 	@Override
@@ -88,12 +52,11 @@ public class FractalPanel extends JPanel {
 	}
 
 	public void save() {
-		BufferedImage image = delegate.requestImage();
-		JFileChooser jFileChooser = new JFileChooser();
+		JFileChooser jFileChooser = new JFileChooser(System.getProperty("user.home") + File.separator + "Desktop");
 		if (jFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+			File file = jFileChooser.getSelectedFile();
 			try {
-				File file = jFileChooser.getSelectedFile();
-				ImageIO.write(image, "bmp", file);
+				ImageIO.write(delegate.requestImage(), "bmp", file);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

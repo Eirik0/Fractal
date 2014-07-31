@@ -7,8 +7,6 @@ public class JuliaColorer {
 	public static int DEFAULT_NUMBER_OF_COLORS = 5;
 	public static int DEFAULT_DISTANCE_BETWEEN_COLORS = 50;
 
-	private static Random r = new Random();
-
 	private static List<Color> baseColors = new ArrayList<>();
 	private static List<Color> colors = new ArrayList<>();
 	private static int numberOfColors = DEFAULT_NUMBER_OF_COLORS;
@@ -17,7 +15,7 @@ public class JuliaColorer {
 	public static void resetColors() {
 		baseColors.clear();
 		for (int i = 0; i < numberOfColors; ++i) {
-			baseColors.add(new Color(r.nextInt(255), r.nextInt(255), r.nextInt(255)));
+			baseColors.add(randomColor());
 		}
 		setColors(numberOfColors, distanceBetweenColors, true);
 	}
@@ -35,7 +33,7 @@ public class JuliaColorer {
 			int diff = cols - baseColors.size();
 			if (diff > 0) {
 				for (int i = 0; i < diff; ++i) {
-					baseColors.add(new Color(r.nextInt(255), r.nextInt(255), r.nextInt(255)));
+					baseColors.add(randomColor());
 				}
 			} else if (diff < 0) {
 				for (int i = 0; i < -diff; ++i) {
@@ -63,6 +61,10 @@ public class JuliaColorer {
 		}
 		numberOfColors = cols;
 		distanceBetweenColors = dist;
+	}
+
+	private static Color randomColor() {
+		return new Color(new Random().nextInt(255), new Random().nextInt(255), new Random().nextInt(255));
 	}
 
 	public static Color getColor(int iterations) {
