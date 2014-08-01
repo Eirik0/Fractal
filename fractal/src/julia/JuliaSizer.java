@@ -45,17 +45,13 @@ public class JuliaSizer {
 	}
 
 	public static void zoomTo(double ul_x, double ul_y, double br_x, double br_y) {
-		double x = getX(ul_x);
-		double y = getY(ul_y);
-
-		setJuliaBounds(x, y, getX(br_x) - x, getY(br_y) - y);
+		setJuliaBounds(getX(ul_x), getY(ul_y), getX(br_x) - getX(ul_x), getY(br_y) - getY(ul_y));
 	}
 
 	public static void setImageDimensions(int width, int height) {
-		// This makes the bounds of the JuliaSet scale with the viewable window
 		double dx = (double) width / imageWidth;
 		double dy = (double) height / imageHeight;
-		// center
+
 		imageWidth = width;
 		imageHeight = height;
 
@@ -72,11 +68,14 @@ public class JuliaSizer {
 		// This makes the aspect ratio of the JuliaSet and the image 1:1
 		double imageAspectRatio = (double) imageWidth / imageHeight;
 		double juliaAspectRatio = width / height;
-		// scale width
-		// TODO scale height sometimes ?
-		juliaWidth *= (imageAspectRatio / juliaAspectRatio);
 
-		x0 -= (juliaWidth - width) / 2;
+		if (imageAspectRatio > juliaAspectRatio) {
+			juliaWidth *= (imageAspectRatio / juliaAspectRatio);
+			x0 -= (juliaWidth - width) / 2;
+		} else {
+			juliaHeight *= (juliaAspectRatio / imageAspectRatio);
+			y0 -= (juliaHeight - height) / 2;
+		}
 
 		setScale();
 	}

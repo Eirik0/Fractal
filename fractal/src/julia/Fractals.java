@@ -34,8 +34,9 @@ public class Fractals {
 			while (xsq + ysq < 4 && count <= MAX_ITERATIONS) {
 				xsq = x * x;
 				ysq = y * y;
+				double xy = x * y;
 
-				y = 2 * x * y + y1;
+				y = xy + xy + y1;
 				x = xsq - ysq + x1;
 
 				++count;
@@ -72,9 +73,11 @@ public class Fractals {
 			while (xsq + ysq < 4 && count <= MAX_ITERATIONS) {
 				xsq = x * x;
 				ysq = y * y;
+				double xy = x * y;
 
-				y = 2 * x * y + cy;
+				y = xy + xy + cy;
 				x = xsq - ysq + cx;
+
 				++count;
 			}
 

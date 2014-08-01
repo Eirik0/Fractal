@@ -2,7 +2,6 @@ package gui;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.concurrent.*;
 
@@ -40,17 +39,37 @@ public class FractalPanel extends JPanel {
 
 	@Override
 	public void paintComponent(Graphics g) {
-		int width = getWidth();
-		int height = getHeight();
-
-		BufferedImage image = delegate.requestImage();
-		g.drawImage(image, 0, 0, width, height, null);
+		g.drawImage(delegate.requestImage(), 0, 0, null);
 
 		if (mouseAdapter.isDragging()) {
+			drawZoomPrediction(g);
+
 			g.setColor(Color.RED);
-			// TODO draw predicted square with static sizer
 			g.drawRect(mouseAdapter.getDragUpperLeftX(), mouseAdapter.getDragUpperLeftY(), mouseAdapter.getWidth(), mouseAdapter.getHeight());
 		}
+	}
+
+	private void drawZoomPrediction(Graphics g) {
+		g.setColor(Color.GREEN);
+
+		double x0 = mouseAdapter.getDragUpperLeftX();
+		double y0 = mouseAdapter.getDragUpperLeftY();
+
+		double zoomWidth = mouseAdapter.getWidth();
+		double zoomHeight = mouseAdapter.getHeight();
+
+		double screenAspectRatio = (double) getWidth() / getHeight();
+		double zoomAspectRatio = zoomWidth / zoomHeight;
+
+		if (screenAspectRatio > zoomAspectRatio) {
+			zoomWidth *= (screenAspectRatio / zoomAspectRatio);
+			x0 -= (zoomWidth - mouseAdapter.getWidth()) / 2;
+		} else {
+			zoomHeight *= (zoomAspectRatio / screenAspectRatio);
+			y0 -= (zoomHeight - mouseAdapter.getHeight()) / 2;
+		}
+
+		g.drawRect((int) Math.round(x0), (int) Math.round(y0), (int) Math.round(zoomWidth), (int) Math.round(zoomHeight));
 	}
 
 	public void save() {
