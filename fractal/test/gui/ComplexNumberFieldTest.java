@@ -63,10 +63,42 @@ public class ComplexNumberFieldTest extends Assert {
 	}
 
 	@Test
+	public void testRealPlusSpaceI() {
+		JuliaSet juliaSet = (JuliaSet) new ComplexNumberField(null).textToFractal("1+ i");
+
+		assertEquals(juliaSet.getCx(), 1, 0.0000001);
+		assertEquals(juliaSet.getCy(), 1, 0.0000001);
+	}
+
+	@Test
+	public void testIMinusReal() {
+		JuliaSet juliaSet = (JuliaSet) new ComplexNumberField(null).textToFractal("i-.12");
+
+		assertEquals(juliaSet.getCx(), -.12, 0.0000001);
+		assertEquals(juliaSet.getCy(), 1, 0.0000001);
+	}
+
+	@Test
 	public void testImaginaryPlusReal() {
 		JuliaSet juliaSet = (JuliaSet) new ComplexNumberField(null).textToFractal("1.23i+0.12");
 
-		assertEquals(juliaSet.getCx(), 1.23, 0.0000001);
-		assertEquals(juliaSet.getCy(), 0.12, 0.0000001);
+		assertEquals(juliaSet.getCx(), 0.12, 0.0000001);
+		assertEquals(juliaSet.getCy(), 1.23, 0.0000001);
+	}
+
+	@Test
+	public void testMinusI() {
+		JuliaSet juliaSet = (JuliaSet) new ComplexNumberField(null).textToFractal("-i");
+
+		assertEquals(juliaSet.getCx(), 0, 0.0000001);
+		assertEquals(juliaSet.getCy(), -1, 0.0000001);
+	}
+
+	@Test
+	public void testMinusIMinusReal() {
+		JuliaSet juliaSet = (JuliaSet) new ComplexNumberField(null).textToFractal("-i-2");
+
+		assertEquals(juliaSet.getCx(), -2, 0.0000001);
+		assertEquals(juliaSet.getCy(), -1, 0.0000001);
 	}
 }
