@@ -4,10 +4,10 @@ import java.awt.Color;
 
 import javax.swing.JTextField;
 
-import fr.julia.JuliaImageDrawerDelegate;
 import fr.julia.Fractals.Fractal;
 import fr.julia.Fractals.JuliaSet;
 import fr.julia.Fractals.MandelbrotSet;
+import fr.julia.JuliaImageDrawerDelegate;
 
 @SuppressWarnings("serial")
 public class ComplexNumberField extends JTextField {
@@ -16,67 +16,91 @@ public class ComplexNumberField extends JTextField {
         addActionListener(e -> delegate.setFractal(textToFractal(getText())));
     }
 
-    public Fractal textToFractal(String text) {
+    public Fractal getFractal(String text) {
         setForeground(Color.BLACK);
-        if (text == null) {
-            return new MandelbrotSet();
-        }
 
-        text = text.replaceAll("\\s+", "");
-        if (text.equals("")) {
-            return new MandelbrotSet();
-        }
         try {
-            if (text.startsWith("+")) {
-                text = text.substring(1);
-            } else if (text.chars().filter(c -> c == 'i').count() > 1) {
-                throw new NumberFormatException("too many 'i's");
-            } else if (!text.contains("i")) {
-                return new JuliaSet(Double.parseDouble(text), 0);
-            } else if (text.startsWith("i")) {
-                return new JuliaSet(text.length() == 1 ? 0 : Double.parseDouble(text.substring(1)), 1);
-            }
-
-            String[] splitOnI = text.split("i");
-            if (splitOnI.length == 1) {
-                String splitText = splitOnI[0];
-                if (splitText.equals("-")) {
-                    return new JuliaSet(0, -1);
-                } else if (splitText.matches("-?\\d+(\\.\\d+)?")) {
-                    return new JuliaSet(0, Double.parseDouble(splitText));
-                } else {
-                    return parseComplex(splitText);
-                }
-            } else if (splitOnI.length == 2) {
-                return new JuliaSet(Double.parseDouble(splitOnI[1]), splitOnI[0].equals("-") ? -1 : Double.parseDouble(splitOnI[0]));
-            } else {
-                throw new NumberFormatException("Not valid: " + text);
-            }
-        } catch (NumberFormatException e) {
+            return textToFractal(text);
+        } catch (Exception e) {
+            System.err.println("Error parsing \"" + text + "\": " + e.getMessage());
             setForeground(Color.RED);
             return new MandelbrotSet();
         }
     }
 
-    private static JuliaSet parseComplex(String splitText) {
-        int realSign = 1;
-        if (splitText.startsWith("-")) {
-            realSign = -1;
-            splitText = splitText.substring(1);
+    public static Fractal textToFractal(String text) {
+        text = text == null ? "" : text.replaceAll("\\s+", "");
+
+        if (text.equals("")) {
+            return new MandelbrotSet();
         }
 
-        if (splitText.endsWith("-")) {
-            return new JuliaSet(realSign * Double.parseDouble(splitText.substring(0, splitText.length() - 1)), -1);
-        } else if (splitText.endsWith("+")) {
-            return new JuliaSet(realSign * Double.parseDouble(splitText.substring(0, splitText.length() - 1)), 1);
-        } else if (splitText.contains("+")) {
-            String[] nextSplit = splitText.split("[+]");
-            return new JuliaSet(realSign * Double.parseDouble(nextSplit[0]), Double.parseDouble(nextSplit[1]));
-        } else if (splitText.contains("-")) {
-            String[] nextSplit = splitText.split("-");
-            return new JuliaSet(realSign * Double.parseDouble(nextSplit[0]), -Double.parseDouble(nextSplit[1]));
+        boolean firstIsNegative = false;
+        if (text.startsWith("+")) {
+            text = text.substring(1);
+        } else if (text.startsWith("-")) {
+            text = text.substring(1);
+            firstIsNegative = true;
+        }
+
+        boolean containsPlus = checkCount(text, '+');
+        boolean containsMinus = checkCount(text, '-');
+        boolean containsI = checkCount(text, 'i');
+
+        if (!containsPlus && !containsMinus) {
+            if (containsI) {
+                return new JuliaSet(0, parseImaginary(text, firstIsNegative));
+            } else {
+                return new JuliaSet(parseReal(text, firstIsNegative), 0);
+            }
+        }
+
+        boolean secondIsNegative = false;
+        String[] split;
+        if (containsPlus) {
+            split = text.split("\\+");
+        } else { // containsMinus
+            split = text.split("-");
+            secondIsNegative = true;
+        }
+
+        if (!containsI) {
+            throw new NumberFormatException("Missing 'i'");
+        }
+
+        if (split[0].length() == 0) {
+            throw new NumberFormatException("First is empty");
+        } else if (split[1].length() == 0) {
+            throw new NumberFormatException("Second is empty");
+        }
+
+        if (split[0].contains("i")) {
+            return new JuliaSet(parseReal(split[1], secondIsNegative), parseImaginary(split[0], firstIsNegative));
         } else {
-            throw new NumberFormatException("Not valid: " + splitText);
+            return new JuliaSet(parseReal(split[0], firstIsNegative), parseImaginary(split[1], secondIsNegative));
+        }
+    }
+
+    private static boolean checkCount(String text, char ch) {
+        long count = text.chars().filter(c -> c == ch).count();
+        if (count > 1) {
+            throw new NumberFormatException("too many '" + ch + "'s");
+        }
+        return count == 1;
+    }
+
+    private static double parseReal(String text, boolean negate) {
+        double d = Double.parseDouble(text);
+        return negate ? -d : d;
+    }
+
+    private static double parseImaginary(String text, boolean negate) {
+        if (text.endsWith("i")) {
+            String subText = text.substring(0, text.length() - 1);
+            double d = subText.isEmpty() ? 1 : Double.parseDouble(subText);
+            return negate ? -d : d;
+        } else {
+            throw new NumberFormatException("'i' in incorrect position");
         }
     }
 }
