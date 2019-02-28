@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.julia.Fractals.Fractal;
+import fr.fractal.Fractal;
 
 public class JuliaImageDrawerDelegate {
     private Fractal juliaSet;

@@ -4,17 +4,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import fr.julia.Fractals;
-import fr.julia.Fractals.Fractal;
-import fr.julia.Fractals.JuliaSet;
+import fr.fractal.Fractal;
+import fr.fractal.JuliaSet;
+import fr.fractal.MandelbrotSet;
 
 public class ComplexNumberFieldTest {
     private static void checkMandelbrotSet(Fractal fractal) {
-        assertEquals(Fractals.MandelbrotSet.class, fractal.getClass());
+        assertEquals(MandelbrotSet.class, fractal.getClass());
     }
 
     private static void checkJuliaSet(Fractal fractal, double cx, double cy) {
-        assertEquals(Fractals.JuliaSet.class, fractal.getClass());
+        assertEquals(JuliaSet.class, fractal.getClass());
         assertEquals(cx, ((JuliaSet) fractal).getCx());
         assertEquals(cy, ((JuliaSet) fractal).getCy());
     }

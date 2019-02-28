@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import fr.fractal.Fractal;
+
 public class JuliaColorer {
     public static final int DEFAULT_NUMBER_OF_COLORS = 5;
     public static final int DEFAULT_DISTANCE_BETWEEN_COLORS = 50;
@@ -73,7 +75,7 @@ public class JuliaColorer {
     }
 
     public static Color getColor(int iterations) {
-        if (iterations > Fractals.MAX_ITERATIONS - 1 || colors.size() == 0) {
+        if (iterations > Fractal.MAX_ITERATIONS - 1 || colors.size() == 0) {
             return Color.BLACK;
         }
 

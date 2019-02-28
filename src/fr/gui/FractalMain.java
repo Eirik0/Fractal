@@ -13,11 +13,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
+import fr.fractal.Fractal;
+import fr.fractal.JuliaSet;
 import fr.julia.JuliaColorer;
 import fr.julia.JuliaImageDrawerDelegate;
 import fr.julia.JuliaSizer;
-import fr.julia.Fractals.Fractal;
-import fr.julia.Fractals.JuliaSet;
 
 public class FractalMain {
     private static final Fractal DEFAULT_FRACTAL = new JuliaSet(-0.1, 0.651);

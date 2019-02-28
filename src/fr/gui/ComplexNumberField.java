@@ -4,9 +4,9 @@ import java.awt.Color;
 
 import javax.swing.JTextField;
 
-import fr.julia.Fractals.Fractal;
-import fr.julia.Fractals.JuliaSet;
-import fr.julia.Fractals.MandelbrotSet;
+import fr.fractal.Fractal;
+import fr.fractal.JuliaSet;
+import fr.fractal.MandelbrotSet;
 import fr.julia.JuliaImageDrawerDelegate;
 
 @SuppressWarnings("serial")

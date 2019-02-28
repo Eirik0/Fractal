@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.julia.Fractals.Fractal;
+import fr.fractal.Fractal;
 
 public class JuliaDrawer {
     private static final int INITIAL_PIXEL_PER_DATA = 32;
