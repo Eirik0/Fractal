@@ -1,4 +1,4 @@
-package gui;
+package fr.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -13,11 +13,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
-import julia.Fractals.Fractal;
-import julia.Fractals.JuliaSet;
-import julia.JuliaColorer;
-import julia.JuliaImageDrawerDelegate;
-import julia.JuliaSizer;
+import fr.julia.JuliaColorer;
+import fr.julia.JuliaImageDrawerDelegate;
+import fr.julia.JuliaSizer;
+import fr.julia.Fractals.Fractal;
+import fr.julia.Fractals.JuliaSet;
 
 public class FractalMain {
     private static final Fractal DEFAULT_FRACTAL = new JuliaSet(-0.1, 0.651);

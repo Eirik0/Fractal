@@ -1,4 +1,4 @@
-package julia;
+package fr.julia;
 
 public class JuliaSizer {
     private static double x0;

@@ -1,4 +1,4 @@
-package gui;
+package fr.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -13,8 +13,8 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
-import julia.JuliaImageDrawerDelegate;
-import julia.JuliaSizer;
+import fr.julia.JuliaImageDrawerDelegate;
+import fr.julia.JuliaSizer;
 
 @SuppressWarnings("serial")
 public class FractalPanel extends JPanel {

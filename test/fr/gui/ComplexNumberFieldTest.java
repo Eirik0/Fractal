@@ -1,11 +1,12 @@
-package gui;
+package fr.gui;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import julia.Fractals.Fractal;
-import julia.Fractals.JuliaSet;
-import julia.Fractals.MandelbrotSet;
+import fr.gui.ComplexNumberField;
+import fr.julia.Fractals.Fractal;
+import fr.julia.Fractals.JuliaSet;
+import fr.julia.Fractals.MandelbrotSet;
 
 public class ComplexNumberFieldTest extends Assert {
 

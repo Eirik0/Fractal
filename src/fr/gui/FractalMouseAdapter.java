@@ -1,11 +1,11 @@
-package gui;
+package fr.gui;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-import julia.JuliaImageDrawerDelegate;
-import julia.JuliaSizer;
+import fr.julia.JuliaImageDrawerDelegate;
+import fr.julia.JuliaSizer;
 
 public class FractalMouseAdapter extends MouseAdapter {
     private JuliaImageDrawerDelegate delegate;

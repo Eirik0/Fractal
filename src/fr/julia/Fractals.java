@@ -1,4 +1,4 @@
-package julia;
+package fr.julia;
 
 public class Fractals {
     public static final int MAX_ITERATIONS = 20000;

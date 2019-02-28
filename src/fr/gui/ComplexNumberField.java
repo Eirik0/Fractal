@@ -1,13 +1,13 @@
-package gui;
+package fr.gui;
 
 import java.awt.Color;
 
 import javax.swing.JTextField;
 
-import julia.Fractals.Fractal;
-import julia.Fractals.JuliaSet;
-import julia.Fractals.MandelbrotSet;
-import julia.JuliaImageDrawerDelegate;
+import fr.julia.JuliaImageDrawerDelegate;
+import fr.julia.Fractals.Fractal;
+import fr.julia.Fractals.JuliaSet;
+import fr.julia.Fractals.MandelbrotSet;
 
 @SuppressWarnings("serial")
 public class ComplexNumberField extends JTextField {

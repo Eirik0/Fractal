@@ -1,4 +1,4 @@
-package julia;
+package fr.julia;
 
 import java.awt.Color;
 import java.util.ArrayList;
