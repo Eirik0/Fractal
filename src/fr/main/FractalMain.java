@@ -1,4 +1,4 @@
-package fr.gui;
+package fr.main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -13,9 +13,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
+import fr.draw.FractalColorer;
 import fr.fractal.Fractal;
 import fr.fractal.JuliaSet;
-import fr.julia.JuliaColorer;
+import fr.gui.ComplexNumberField;
+import fr.gui.FractalPanel;
 import fr.julia.JuliaImageDrawerDelegate;
 import fr.julia.JuliaSizer;
 
@@ -41,23 +43,23 @@ public class FractalMain {
 
         JLabel colorLabel = createLabel("colors: ");
 
-        JSlider colorSlider = createSlider(2, 50, JuliaColorer.DEFAULT_NUMBER_OF_COLORS);
+        JSlider colorSlider = createSlider(2, 50, FractalColorer.DEFAULT_NUM_BASE_COLORS);
         colorSlider.addChangeListener(e -> {
-            JuliaColorer.setNumberOfColors(colorSlider.getValue());
+            FractalManager.setNumberOfColors(colorSlider.getValue());
             delegate.requestReset();
         });
 
         JLabel gradientLabel = createLabel("gradient: ");
 
-        JSlider gradientSlider = createSlider(1, 100, JuliaColorer.DEFAULT_DISTANCE_BETWEEN_COLORS);
+        JSlider gradientSlider = createSlider(1, 100, FractalColorer.DEFAULT_NUM_BETWEEN_COLORS);
         gradientSlider.addChangeListener(e -> {
-            JuliaColorer.setDistanceBetweenColors(gradientSlider.getValue());
+            FractalManager.setNumberOfBetweenColors(gradientSlider.getValue());
             delegate.requestReset();
         });
 
         JButton resetColorButton = new JButton("Reset Color");
         resetColorButton.addActionListener(e -> {
-            JuliaColorer.resetColors();
+            FractalManager.resetColors();
             delegate.requestReset();
         });
 

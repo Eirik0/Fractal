@@ -23,7 +23,7 @@ public class FractalPanel extends JPanel {
     private JuliaImageDrawerDelegate delegate;
     private FractalMouseAdapter mouseAdapter;
 
-    FractalPanel(JuliaImageDrawerDelegate delegate) {
+    public FractalPanel(JuliaImageDrawerDelegate delegate) {
         this.delegate = delegate;
         mouseAdapter = new FractalMouseAdapter(delegate);
 

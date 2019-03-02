@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.fractal.Fractal;
+import fr.main.FractalManager;
 
 public class JuliaImageDrawerDelegate {
     private Fractal juliaSet;
@@ -21,7 +22,7 @@ public class JuliaImageDrawerDelegate {
     Graphics2D currentGraphics;
 
     public JuliaImageDrawerDelegate(int imageWidth, int imageHeight, Fractal fractal) {
-        JuliaColorer.resetColors();
+        FractalManager.resetColors();
         JuliaSizer.init(-2.5, -2.5, 5, 5, imageWidth, imageHeight);
 
         juliaSet = fractal;

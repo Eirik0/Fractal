@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.fractal.Fractal;
+import fr.main.FractalManager;
 
 public class JuliaDrawer {
     private static final int INITIAL_PIXEL_PER_DATA = 32;
@@ -83,10 +84,10 @@ public class JuliaDrawer {
             int y = y0;
             do {
                 if (pixelPerData >= 1) {
-                    graphics.setColor(JuliaColorer.getColor(julia.getIterations(JuliaSizer.getX(currentX + offset), JuliaSizer.getY(y + offset))));
+                    graphics.setColor(FractalManager.getColor(julia, JuliaSizer.getX(currentX + offset), JuliaSizer.getY(y + offset)));
                     graphics.fillRect(currentX - x0, y - y0, width, width);
                 } else {
-                    graphics.setColor(JuliaColorer.getColor(julia.getIterations(currentX, y, pixelPerData)));
+                    graphics.setColor(FractalManager.getColor(julia, currentX, y, pixelPerData));
                     graphics.drawLine(currentX - x0, y - y0, currentX - x0, y - y0);
                 }
                 y += width;
