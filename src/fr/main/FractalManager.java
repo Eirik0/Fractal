@@ -7,8 +7,8 @@ import fr.draw.FractalColorer;
 import fr.fractal.Fractal;
 import fr.gui.ComplexNumberField;
 import fr.julia.JuliaImageDrawerDelegate;
-import fr.julia.JuliaSizer;
 import gt.component.ComponentCreator;
+import gt.gameentity.CartesianSpace;
 
 public class FractalManager {
     private static final int MAX_ITERATIONS = 20000;
@@ -16,13 +16,14 @@ public class FractalManager {
     private static final FractalManager instance = new FractalManager();
 
     private Fractal fractal;
+    private CartesianSpace cs;
     private final FractalColorer colorer;
     private final JuliaImageDrawerDelegate delegate;
 
     private FractalManager() {
         fractal = ComplexNumberField.textToFractal(FractalMain.DEFAULT_FRACTAL_TEXT);
+        cs = new CartesianSpace(ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT, -2.5, -2.5, 5, 5);
         colorer = new FractalColorer();
-        JuliaSizer.init(-2.5, -2.5, 5, 5, ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT);
         delegate = new JuliaImageDrawerDelegate(ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT);
     }
 
@@ -42,15 +43,15 @@ public class FractalManager {
     }
 
     public static Color getColor(double imageX, double imageY) {
-        double x = JuliaSizer.getX(imageX);
-        double y = JuliaSizer.getY(imageY);
+        double x = instance.cs.getX(imageX);
+        double y = instance.cs.getY(imageY);
         return instance.colorer.getColor(instance.fractal.getIterations(x, y, MAX_ITERATIONS), MAX_ITERATIONS);
     }
 
     public static Color getColor(double imageX, double imageY, int calculationsX) {
-        double x = JuliaSizer.getX(imageX);
-        double y = JuliaSizer.getY(imageY);
-        double dx = JuliaSizer.getX(imageX + 1.0 / calculationsX) - x;
+        double x = instance.cs.getX(imageX);
+        double y = instance.cs.getY(imageY);
+        double dx = instance.cs.getWidth(1.0 / calculationsX);
         return instance.colorer.getColor(instance.fractal.getIterations(x, y, calculationsX, dx, MAX_ITERATIONS), MAX_ITERATIONS);
     }
 
@@ -64,23 +65,26 @@ public class FractalManager {
     }
 
     public static void setImageSize(int width, int height) {
-        JuliaSizer.setImageDimensions(width, height);
+        instance.cs.setSize(width, height);
         instance.delegate.requestReset();
     }
 
     public static void setFractalBounds(double x0, double y0, double width, double height) {
-        JuliaSizer.setJuliaBounds(x0, y0, width, height);
+        instance.cs.setBounds(x0, y0, width, height);
         instance.delegate.requestReset();
     }
 
     public static void zoomTo(double x0, double y0, double x1, double y1) {
-        JuliaSizer.zoomTo(x0, y0, x1, y1);
+        double x = instance.cs.getX(x0);
+        double y = instance.cs.getY(y0);
+        double width = instance.cs.getWidth(x1 - x0);
+        double height = instance.cs.getWidth(y1 - y0);
+        instance.cs.setBounds(x, y, width, height);
         instance.delegate.requestReset();
     }
 
     public static void zoom(int n) {
-        JuliaSizer.zoom(n);
+        instance.cs.zoom(0.1 * n);
         instance.delegate.requestReset();
     }
-
 }
