@@ -21,14 +21,6 @@ public class JuliaSizer {
         setJuliaBounds(x0, y0, juliaWidth, juliaHeight);
     }
 
-    public static int getImageWidth() {
-        return imageWidth;
-    }
-
-    public static int getImageHeight() {
-        return imageHeight;
-    }
-
     public static double getX(double imageX) {
         return x0 + imageX * scaleX;
     }

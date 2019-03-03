@@ -56,10 +56,10 @@ public class JuliaImageDrawerDelegate {
         needsNewImage = true;
     }
 
-    public BufferedImage requestImage() {
+    public BufferedImage requestImage(int imageWidth, int imageHeight) {
         if (needsNewImage) {
             needsNewImage = false;
-            return requestNewImage();
+            return requestNewImage(imageWidth, imageHeight);
         }
 
         checkSplit();
@@ -67,12 +67,12 @@ public class JuliaImageDrawerDelegate {
         return createImageFromDrawers();
     }
 
-    private BufferedImage requestNewImage() {
+    private BufferedImage requestNewImage(int imageWidth, int imageHeight) {
         for (JuliaDrawer drawer : drawers) {
             drawer.requestStop();
         }
 
-        setUpDrawers(JuliaSizer.getImageWidth(), JuliaSizer.getImageHeight());
+        setUpDrawers(imageWidth, imageHeight);
 
         return createImageFromDrawers();
     }

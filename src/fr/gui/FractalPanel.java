@@ -42,7 +42,7 @@ public class FractalPanel extends JPanel {
 
     @Override
     public void paintComponent(Graphics g) {
-        g.drawImage(FractalManager.requestImage(), 0, 0, null);
+        g.drawImage(FractalManager.requestImage(getWidth(), getHeight()), 0, 0, null);
 
         if (mouseAdapter.isDragging()) {
             drawZoomPrediction(g);
@@ -80,7 +80,7 @@ public class FractalPanel extends JPanel {
         if (jFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             File file = jFileChooser.getSelectedFile();
             try {
-                ImageIO.write(FractalManager.requestImage(), "bmp", file);
+                ImageIO.write(FractalManager.requestImage(getWidth(), getHeight()), "bmp", file);
             } catch (IOException e) {
                 e.printStackTrace();
             }

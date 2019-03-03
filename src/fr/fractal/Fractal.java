@@ -1,18 +1,14 @@
 package fr.fractal;
 
-import fr.julia.JuliaSizer;
-
 public interface Fractal {
     int getIterations(double x, double y, int maxIterations);
 
-    default int[] getIterations(double x, double y, double pixelPerData, int maxIterations) {
-        int dataPer = (int) Math.round(1 / pixelPerData);
-        int[] iterations = new int[dataPer * dataPer];
+    default int[] getIterations(double x0, double y0, int calculationsX, double dx, int maxIterations) {
+        int[] iterations = new int[calculationsX * calculationsX];
         int i = 0;
-        for (double xOffset = 0; xOffset < 1; xOffset += pixelPerData) {
-            for (double yOffset = 0; yOffset < 1; yOffset += pixelPerData) {
-                iterations[i] = getIterations(JuliaSizer.getX(x + xOffset), JuliaSizer.getY(y + yOffset), maxIterations);
-                ++i;
+        for (double x = 0; x < calculationsX; ++x) {
+            for (double y = 0; y < calculationsX; ++y) {
+                iterations[i++] = getIterations(x0 + x * dx, y0 + y * dx, maxIterations);
             }
         }
         return iterations;

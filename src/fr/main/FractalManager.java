@@ -41,12 +41,17 @@ public class FractalManager {
         instance.delegate.requestReset();
     }
 
-    public static Color getColor(double x, double y) {
+    public static Color getColor(double imageX, double imageY) {
+        double x = JuliaSizer.getX(imageX);
+        double y = JuliaSizer.getY(imageY);
         return instance.colorer.getColor(instance.fractal.getIterations(x, y, MAX_ITERATIONS), MAX_ITERATIONS);
     }
 
-    public static Color getColor(double x, double y, double pixelPerData) {
-        return instance.colorer.getColor(instance.fractal.getIterations(x, y, pixelPerData, MAX_ITERATIONS), MAX_ITERATIONS);
+    public static Color getColor(double imageX, double imageY, int calculationsX) {
+        double x = JuliaSizer.getX(imageX);
+        double y = JuliaSizer.getY(imageY);
+        double dx = JuliaSizer.getX(imageX + 1.0 / calculationsX) - x;
+        return instance.colorer.getColor(instance.fractal.getIterations(x, y, calculationsX, dx, MAX_ITERATIONS), MAX_ITERATIONS);
     }
 
     public static void setFractal(Fractal fractal) {
@@ -54,8 +59,8 @@ public class FractalManager {
         instance.delegate.requestReset();
     }
 
-    public static BufferedImage requestImage() {
-        return instance.delegate.requestImage();
+    public static BufferedImage requestImage(int imageWidth, int imageHeight) {
+        return instance.delegate.requestImage(imageWidth, imageHeight);
     }
 
     public static void setImageSize(int width, int height) {
