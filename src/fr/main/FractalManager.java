@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 import fr.draw.FractalColorer;
+import fr.draw.FractalDrawerDelegate;
 import fr.fractal.Fractal;
 import fr.gui.ComplexNumberField;
-import fr.julia.FractalDrawerDelegate;
 import gt.component.ComponentCreator;
 import gt.gameentity.CartesianSpace;
 

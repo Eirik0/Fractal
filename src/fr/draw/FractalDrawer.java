@@ -1,4 +1,4 @@
-package fr.julia;
+package fr.draw;
 
 import java.awt.Color;
 import java.awt.Graphics;

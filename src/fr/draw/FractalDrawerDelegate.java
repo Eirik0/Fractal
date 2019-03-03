@@ -1,4 +1,4 @@
-package fr.julia;
+package fr.draw;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
