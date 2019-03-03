@@ -27,7 +27,7 @@ public class FractalDrawer implements DrawingMethods {
     private int initialX;
 
     // Ranges from 5 to -3 and is used to determine the number of calculations per pixel
-    // 5 -> 32x32 blocks -3 => 1x1 blocks with 64 calculations
+    // 5 -> 32x32 blocks -3 -> 1x1 blocks with 64 calculations
     private int logCP;
 
     private int x0;
@@ -116,10 +116,10 @@ public class FractalDrawer implements DrawingMethods {
         return isDrawingComplete;
     }
 
-    public boolean isSlowerThan(FractalDrawer slowest) {
-        return (logCP > slowest.logCP)
-                || (logCP == slowest.logCP && getImageHeight() > slowest.getImageHeight())
-                || (getImageHeight() == slowest.getImageHeight() && currentX < slowest.currentX);
+    public boolean isSlowerThan(FractalDrawer other) {
+        return (logCP > other.logCP)
+                || (logCP == other.logCP && getImageHeight() > other.getImageHeight())
+                || (getImageHeight() == other.getImageHeight() && currentX < other.currentX);
     }
 
     public boolean isSplittable() {

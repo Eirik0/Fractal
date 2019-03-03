@@ -84,7 +84,7 @@ public class FractalManager {
     }
 
     public static void zoom(int n) {
-        instance.cs.zoom(0.1 * n);
+        instance.cs.zoom(-0.1 * n);
         instance.delegate.requestReset();
     }
 }
