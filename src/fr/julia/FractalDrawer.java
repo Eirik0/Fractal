@@ -11,7 +11,7 @@ import fr.fractal.Fractal;
 import fr.main.FractalManager;
 import gt.gameentity.DrawingMethods;
 
-public class JuliaDrawer implements DrawingMethods {
+public class FractalDrawer implements DrawingMethods {
     private static final int INITIAL_LOG_CP = 5;
     private static final double MIN_LOG_CP = -3;
 
@@ -35,14 +35,14 @@ public class JuliaDrawer implements DrawingMethods {
     private int x1;
     private int y1;
 
-    public JuliaDrawer(BufferedImage currentImage, int x0, int y0, int x1, int y1) {
+    public FractalDrawer(BufferedImage currentImage, int x0, int y0, int x1, int y1) {
         init(fractal, x0, y0, x1, y1, x0, INITIAL_LOG_CP);
         setImage(new BufferedImage(x1 - x0, y1 - y0, BufferedImage.TYPE_INT_RGB));
         graphics.drawImage(currentImage, 0, 0, null);
         startDrawing();
     }
 
-    private JuliaDrawer(BufferedImage image, int x0, int y0, int x1, int y1, int initialX, int logCP) {
+    private FractalDrawer(BufferedImage image, int x0, int y0, int x1, int y1, int initialX, int logCP) {
         init(fractal, x0, y0, x1, y1, initialX, logCP);
         setImage(image);
         startDrawing();
@@ -116,7 +116,7 @@ public class JuliaDrawer implements DrawingMethods {
         return isDrawingComplete;
     }
 
-    public boolean isSlowerThan(JuliaDrawer slowest) {
+    public boolean isSlowerThan(FractalDrawer slowest) {
         return (logCP > slowest.logCP)
                 || (logCP == slowest.logCP && getImageHeight() > slowest.getImageHeight())
                 || (getImageHeight() == slowest.getImageHeight() && currentX < slowest.currentX);
@@ -126,15 +126,15 @@ public class JuliaDrawer implements DrawingMethods {
         return getImageHeight() > 1;
     }
 
-    public List<JuliaDrawer> splitVertically() {
+    public List<FractalDrawer> splitVertically() {
         requestStop();
 
         BufferedImage top = splitImage(0, 0, getImageWidth(), getImageHeight() / 2);
         BufferedImage bottom = splitImage(0, getImageHeight() / 2, getImageWidth(), getImageHeight() - (getImageHeight() / 2));
 
-        List<JuliaDrawer> drawers = new ArrayList<>();
-        drawers.add(new JuliaDrawer(top, x0, y0, x1, y0 + getImageHeight() / 2, currentX, logCP));
-        drawers.add(new JuliaDrawer(bottom, x0, y0 + getImageHeight() / 2, x1, y1, currentX, logCP));
+        List<FractalDrawer> drawers = new ArrayList<>();
+        drawers.add(new FractalDrawer(top, x0, y0, x1, y0 + getImageHeight() / 2, currentX, logCP));
+        drawers.add(new FractalDrawer(bottom, x0, y0 + getImageHeight() / 2, x1, y1, currentX, logCP));
 
         return drawers;
     }

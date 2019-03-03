@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 import fr.draw.FractalColorer;
 import fr.fractal.Fractal;
 import fr.gui.ComplexNumberField;
-import fr.julia.JuliaImageDrawerDelegate;
+import fr.julia.FractalDrawerDelegate;
 import gt.component.ComponentCreator;
 import gt.gameentity.CartesianSpace;
 
@@ -18,13 +18,13 @@ public class FractalManager {
     private Fractal fractal;
     private CartesianSpace cs;
     private final FractalColorer colorer;
-    private final JuliaImageDrawerDelegate delegate;
+    private final FractalDrawerDelegate delegate;
 
     private FractalManager() {
         fractal = ComplexNumberField.textToFractal(FractalMain.DEFAULT_FRACTAL_TEXT);
         cs = new CartesianSpace(ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT, -2.5, -2.5, 5, 5);
         colorer = new FractalColorer();
-        delegate = new JuliaImageDrawerDelegate(ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT);
+        delegate = new FractalDrawerDelegate(ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT);
     }
 
     public static void resetColors() {

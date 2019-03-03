@@ -5,18 +5,18 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JuliaImageDrawerDelegate {
+public class FractalDrawerDelegate {
     private final int horizontalDrawers;
     private final int verticalDrawers;
 
-    private List<JuliaDrawer> drawers = new ArrayList<>();
+    private List<FractalDrawer> drawers = new ArrayList<>();
 
     private boolean needsNewImage = false;
 
     BufferedImage currentImage;
     Graphics2D currentGraphics;
 
-    public JuliaImageDrawerDelegate(int imageWidth, int imageHeight) {
+    public FractalDrawerDelegate(int imageWidth, int imageHeight) {
         currentImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
         currentGraphics = currentImage.createGraphics();
 
@@ -47,7 +47,7 @@ public class JuliaImageDrawerDelegate {
                 int x1 = (int) Math.round(x + width);
                 int y1 = (int) Math.round(y + height);
 
-                drawers.add(new JuliaDrawer(currentImage.getSubimage(x0, y0, x1 - x0, y1 - y0), x0, y0, x1, y1));
+                drawers.add(new FractalDrawer(currentImage.getSubimage(x0, y0, x1 - x0, y1 - y0), x0, y0, x1, y1));
             }
         }
     }
@@ -68,7 +68,7 @@ public class JuliaImageDrawerDelegate {
     }
 
     private BufferedImage requestNewImage(int imageWidth, int imageHeight) {
-        for (JuliaDrawer drawer : drawers) {
+        for (FractalDrawer drawer : drawers) {
             drawer.requestStop();
         }
 
@@ -78,7 +78,7 @@ public class JuliaImageDrawerDelegate {
     }
 
     private BufferedImage createImageFromDrawers() {
-        for (JuliaDrawer drawer : drawers) {
+        for (FractalDrawer drawer : drawers) {
             drawer.drawOn(currentGraphics);
         }
 
@@ -86,8 +86,8 @@ public class JuliaImageDrawerDelegate {
     }
 
     private void checkSplit() {
-        JuliaDrawer firstFinished = null;
-        for (JuliaDrawer drawer : drawers) {
+        FractalDrawer firstFinished = null;
+        for (FractalDrawer drawer : drawers) {
             if (drawer.isDrawingComplete()) {
                 firstFinished = drawer;
                 break;
@@ -102,7 +102,7 @@ public class JuliaImageDrawerDelegate {
                 return;
             }
 
-            JuliaDrawer slowest = getSlowestDrawer();
+            FractalDrawer slowest = getSlowestDrawer();
 
             if (!slowest.isDrawingComplete() && slowest.isSplittable()) {
                 drawers.remove(slowest);
@@ -111,9 +111,9 @@ public class JuliaImageDrawerDelegate {
         }
     }
 
-    private JuliaDrawer getSlowestDrawer() {
-        JuliaDrawer slowest = drawers.get(0);
-        for (JuliaDrawer drawer : drawers) {
+    private FractalDrawer getSlowestDrawer() {
+        FractalDrawer slowest = drawers.get(0);
+        for (FractalDrawer drawer : drawers) {
             if (drawer.isSlowerThan(slowest)) {
                 slowest = drawer;
             }
