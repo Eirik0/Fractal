@@ -4,12 +4,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-import fr.julia.JuliaImageDrawerDelegate;
-import fr.julia.JuliaSizer;
+import fr.main.FractalManager;
 
 public class FractalMouseAdapter extends MouseAdapter {
-    private JuliaImageDrawerDelegate delegate;
-
     private boolean isDragging = false;
 
     private int dragStartX = 0;
@@ -17,8 +14,7 @@ public class FractalMouseAdapter extends MouseAdapter {
     private int dragEndX = 0;
     private int dragEndY = 0;
 
-    FractalMouseAdapter(JuliaImageDrawerDelegate delegate) {
-        this.delegate = delegate;
+    FractalMouseAdapter() {
     }
 
     @Override
@@ -40,16 +36,14 @@ public class FractalMouseAdapter extends MouseAdapter {
         int br_x = dragStartX > dragEndX ? dragStartX : dragEndX;
         int br_y = dragStartY > dragEndY ? dragStartY : dragEndY;
 
-        JuliaSizer.zoomTo(getDragUpperLeftX(), getDragUpperLeftY(), br_x, br_y);
-        delegate.requestReset();
+        FractalManager.zoomTo(getDragUpperLeftX(), getDragUpperLeftY(), br_x, br_y);
 
         isDragging = false;
     }
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        JuliaSizer.zoom(e.getWheelRotation());
-        delegate.requestReset();
+        FractalManager.zoom(e.getWheelRotation());
     }
 
     public boolean isDragging() {

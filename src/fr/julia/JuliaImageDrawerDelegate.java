@@ -5,12 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.fractal.Fractal;
-import fr.main.FractalManager;
-
 public class JuliaImageDrawerDelegate {
-    private Fractal juliaSet;
-
     private final int horizontalDrawers;
     private final int verticalDrawers;
 
@@ -21,12 +16,7 @@ public class JuliaImageDrawerDelegate {
     BufferedImage currentImage;
     Graphics2D currentGraphics;
 
-    public JuliaImageDrawerDelegate(int imageWidth, int imageHeight, Fractal fractal) {
-        FractalManager.resetColors();
-        JuliaSizer.init(-2.5, -2.5, 5, 5, imageWidth, imageHeight);
-
-        juliaSet = fractal;
-
+    public JuliaImageDrawerDelegate(int imageWidth, int imageHeight) {
         currentImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
         currentGraphics = currentImage.createGraphics();
 
@@ -57,14 +47,9 @@ public class JuliaImageDrawerDelegate {
                 int x1 = (int) Math.round(x + width);
                 int y1 = (int) Math.round(y + height);
 
-                drawers.add(new JuliaDrawer(currentImage.getSubimage(x0, y0, x1 - x0, y1 - y0), juliaSet, x0, y0, x1, y1));
+                drawers.add(new JuliaDrawer(currentImage.getSubimage(x0, y0, x1 - x0, y1 - y0), x0, y0, x1, y1));
             }
         }
-    }
-
-    public void setFractal(Fractal fractal) {
-        juliaSet = fractal;
-        needsNewImage = true;
     }
 
     public void requestReset() {

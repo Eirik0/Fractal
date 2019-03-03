@@ -13,26 +13,22 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
-import fr.julia.JuliaImageDrawerDelegate;
-import fr.julia.JuliaSizer;
+import fr.main.FractalManager;
 
 @SuppressWarnings("serial")
 public class FractalPanel extends JPanel {
     private static final int FRAMES_PER_MILLI = (int) ((1.0 / 60) * 1000);
 
-    private JuliaImageDrawerDelegate delegate;
     private FractalMouseAdapter mouseAdapter;
 
-    public FractalPanel(JuliaImageDrawerDelegate delegate) {
-        this.delegate = delegate;
-        mouseAdapter = new FractalMouseAdapter(delegate);
+    public FractalPanel() {
+        mouseAdapter = new FractalMouseAdapter();
 
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 if (getWidth() > 0 && getHeight() > 0) {
-                    JuliaSizer.setImageDimensions(getWidth(), getHeight());
-                    delegate.requestReset();
+                    FractalManager.setImageSize(getWidth(), getHeight());
                 }
             }
         });
@@ -46,7 +42,7 @@ public class FractalPanel extends JPanel {
 
     @Override
     public void paintComponent(Graphics g) {
-        g.drawImage(delegate.requestImage(), 0, 0, null);
+        g.drawImage(FractalManager.requestImage(), 0, 0, null);
 
         if (mouseAdapter.isDragging()) {
             drawZoomPrediction(g);
@@ -84,7 +80,7 @@ public class FractalPanel extends JPanel {
         if (jFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             File file = jFileChooser.getSelectedFile();
             try {
-                ImageIO.write(delegate.requestImage(), "bmp", file);
+                ImageIO.write(FractalManager.requestImage(), "bmp", file);
             } catch (IOException e) {
                 e.printStackTrace();
             }

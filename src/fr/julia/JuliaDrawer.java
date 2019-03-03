@@ -31,14 +31,14 @@ public class JuliaDrawer {
     private int x1;
     private int y1;
 
-    public JuliaDrawer(BufferedImage currentImage, Fractal julia, int x0, int y0, int x1, int y1) {
+    public JuliaDrawer(BufferedImage currentImage, int x0, int y0, int x1, int y1) {
         init(julia, x0, y0, x1, y1, x0, INITIAL_PIXEL_PER_DATA);
         setImage(new BufferedImage(x1 - x0, y1 - y0, BufferedImage.TYPE_INT_RGB));
         graphics.drawImage(currentImage, 0, 0, null);
         startDrawing();
     }
 
-    private JuliaDrawer(BufferedImage image, Fractal julia, int x0, int y0, int x1, int y1, double pixelPerData, int initialX) {
+    private JuliaDrawer(BufferedImage image, int x0, int y0, int x1, int y1, double pixelPerData, int initialX) {
         init(julia, x0, y0, x1, y1, initialX, pixelPerData);
         setImage(image);
         startDrawing();
@@ -84,10 +84,10 @@ public class JuliaDrawer {
             int y = y0;
             do {
                 if (pixelPerData >= 1) {
-                    graphics.setColor(FractalManager.getColor(julia, JuliaSizer.getX(currentX + offset), JuliaSizer.getY(y + offset)));
+                    graphics.setColor(FractalManager.getColor(JuliaSizer.getX(currentX + offset), JuliaSizer.getY(y + offset)));
                     graphics.fillRect(currentX - x0, y - y0, width, width);
                 } else {
-                    graphics.setColor(FractalManager.getColor(julia, currentX, y, pixelPerData));
+                    graphics.setColor(FractalManager.getColor(currentX, y, pixelPerData));
                     graphics.drawLine(currentX - x0, y - y0, currentX - x0, y - y0);
                 }
                 y += width;
@@ -128,8 +128,8 @@ public class JuliaDrawer {
         BufferedImage bottom = splitImage(0, getImageHeight() / 2, getImageWidth(), getImageHeight() - (getImageHeight() / 2));
 
         List<JuliaDrawer> drawers = new ArrayList<>();
-        drawers.add(new JuliaDrawer(top, julia, x0, y0, x1, y0 + getImageHeight() / 2, pixelPerData, currentX));
-        drawers.add(new JuliaDrawer(bottom, julia, x0, y0 + getImageHeight() / 2, x1, y1, pixelPerData, currentX));
+        drawers.add(new JuliaDrawer(top, x0, y0, x1, y0 + getImageHeight() / 2, pixelPerData, currentX));
+        drawers.add(new JuliaDrawer(bottom, x0, y0 + getImageHeight() / 2, x1, y1, pixelPerData, currentX));
 
         return drawers;
     }
