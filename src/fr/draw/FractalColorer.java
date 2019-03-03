@@ -28,7 +28,9 @@ public class FractalColorer implements DrawingMethods {
 
     public void setNumberOfColors(int numColors) {
         int numBetween = allColors.length / baseColors.length;
-        resetBaseColors(baseColors.length, numColors - baseColors.length);
+        int numToCopy = Math.min(baseColors.length, numColors);
+        int numToAdd = numColors - numToCopy;
+        resetBaseColors(numToCopy, numToAdd);
         resetAllColors(numBetween);
     }
 

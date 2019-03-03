@@ -22,8 +22,6 @@ public class FractalMain {
     public static final String DEFAULT_FRACTAL_TEXT = "-0.1 + 0.651i";
 
     public static void main(String[] args) {
-        FractalManager.resetColors();
-
         FractalPanel fractalPanel = new FractalPanel();
 
         JButton saveButton = new JButton("Save");

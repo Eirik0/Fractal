@@ -15,13 +15,13 @@ public class FractalManager {
 
     private static final FractalManager instance = new FractalManager();
 
+    private Fractal fractal;
+    private final FractalColorer colorer;
     private final JuliaImageDrawerDelegate delegate;
 
-    private Fractal fractal = ComplexNumberField.textToFractal(FractalMain.DEFAULT_FRACTAL_TEXT);
-
-    private final FractalColorer colorer = new FractalColorer();
-
     private FractalManager() {
+        fractal = ComplexNumberField.textToFractal(FractalMain.DEFAULT_FRACTAL_TEXT);
+        colorer = new FractalColorer();
         JuliaSizer.init(-2.5, -2.5, 5, 5, ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT);
         delegate = new JuliaImageDrawerDelegate(ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT);
     }
