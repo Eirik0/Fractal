@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
+import fr.gui.ColorSelectionDialog;
 import fr.gui.ComplexNumberField;
 import gt.component.ComponentCreator;
 import gt.component.GamePanel;
@@ -48,30 +49,33 @@ public class FractalMain {
         ComplexNumberField complexField = new ComplexNumberField();
         complexField.setText(DEFAULT_FRACTAL_TEXT);
 
-        JLabel colorLabel = ComponentCreator.createLabel("colors:", Color.GREEN);
+        JLabel colorLabel = ComponentCreator.createLabel("cols:", Color.GREEN);
         JSlider colorSlider = ComponentCreator.createSlider(2, 50, DEFAULT_NUM_BASE_COLORS,
                 value -> FractalManager.setNumberOfColors(value));
 
-        JLabel gradientLabel = ComponentCreator.createLabel("gradient:", Color.GREEN);
+        JLabel gradientLabel = ComponentCreator.createLabel("grad:", Color.GREEN);
         JSlider gradientSlider = ComponentCreator.createSlider(1, 100, DEFAULT_NUM_BETWEEN_COLORS,
                 value -> FractalManager.setNumberOfBetweenColors(value));
 
-        JLabel iterationsLabel = ComponentCreator.createLabel("iterations:", Color.GREEN);
+        JLabel iterationsLabel = ComponentCreator.createLabel("iters:", Color.GREEN);
         JSlider iterationsSlider = ComponentCreator.createSlider(10000, 500000, DEFAULT_NUM_ITERATIONS,
                 value -> FractalManager.setNumberOfIterations(value));
 
         JButton resetColorButton = ComponentCreator.createButton("Reset Color", () -> FractalManager.resetColors());
 
+        JButton configureColorButton = ComponentCreator.createButton("C", () -> ColorSelectionDialog.show());
+
         JButton resetZoomButton = ComponentCreator.createButton("Reset Zoom", () -> FractalManager.setFractalBounds(-2.5, -2.5, 5, 5));
 
         JPanel buttonPanel = createButtonPanel(
-                saveButton, Box.createHorizontalStrut(5),
                 complexLabel, complexField, Box.createHorizontalStrut(5),
-                colorLabel, colorSlider, Box.createHorizontalStrut(5),
-                gradientLabel, gradientSlider, Box.createHorizontalStrut(5),
-                iterationsLabel, iterationsSlider, Box.createHorizontalStrut(5),
-                resetColorButton, Box.createHorizontalStrut(5),
-                resetZoomButton);
+                colorLabel, colorSlider,
+                gradientLabel, gradientSlider,
+                iterationsLabel, iterationsSlider,
+                resetColorButton,
+                configureColorButton,
+                resetZoomButton, Box.createHorizontalStrut(5),
+                saveButton);
 
         // MainFrame, etc
         GameStateManager.setMainPanel(mainPanel);

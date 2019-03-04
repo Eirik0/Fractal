@@ -75,9 +75,6 @@ public class FractalColorer implements DrawingMethods {
         double blue = 0;
         for (int i = 0; i < iterations.length; ++i) {
             Color color = getColor(iterations[i], maxIterations);
-            if (color == null) {
-                "".toString();
-            }
             red += color.getRed();
             green += color.getGreen();
             blue += color.getBlue();
@@ -87,5 +84,15 @@ public class FractalColorer implements DrawingMethods {
 
     private static Color newRandomColor() {
         return new Color(RANDOM.nextInt(256 * 256 * 256 - 1));
+    }
+
+    public Color[] getBaseColors() {
+        return baseColors;
+    }
+
+    public void setBaseColors(Color[] baseColors) {
+        int numBetween = allColors.length / baseColors.length;
+        this.baseColors = baseColors;
+        resetAllColors(numBetween);
     }
 }

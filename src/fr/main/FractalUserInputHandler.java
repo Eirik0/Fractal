@@ -18,10 +18,10 @@ public class FractalUserInputHandler implements Drawable, Sizable {
     private int mouseY = 0;
     private double mouseWheelRotation = 0;
 
-    double screenWidth = 0;
-    double screenHeight = 0;
+    private double screenWidth = 0;
+    private double screenHeight = 0;
 
-    private boolean isDragging = false;
+    private boolean isZoomDragging = false;
     private int dragStartX = 0;
     private int dragStartY = 0;
 
@@ -47,7 +47,7 @@ public class FractalUserInputHandler implements Drawable, Sizable {
 
     @Override
     public void drawOn(Graphics2D graphics) {
-        if (isDragging) {
+        if (isZoomDragging) {
             drawZoomPrediction(graphics);
             graphics.setColor(Color.RED);
             graphics.drawRect(getDragUpperLeftX(), getDragUpperLeftY(), getDragWidth(), getDragHeight());
@@ -86,7 +86,7 @@ public class FractalUserInputHandler implements Drawable, Sizable {
     public void handleUserInput(UserInput input) {
         switch (input) {
         case MOUSE_MOVED:
-            if (leftButtonPressed && ctrlPressed) {
+            if (leftButtonPressed && ctrlPressed && !isZoomDragging) {
                 FractalManager.move(mouseX - mouseTracker.mouseX, mouseY - mouseTracker.mouseY);
             }
             mouseX = mouseTracker.mouseX;
@@ -100,14 +100,14 @@ public class FractalUserInputHandler implements Drawable, Sizable {
         case LEFT_BUTTON_PRESSED:
             leftButtonPressed = true;
             if (!ctrlPressed) {
-                isDragging = true;
+                isZoomDragging = true;
                 dragStartX = mouseTracker.mouseX;
                 dragStartY = mouseTracker.mouseY;
             }
             break;
         case LEFT_BUTTON_RELEASED:
-            if (isDragging) {
-                isDragging = false;
+            if (isZoomDragging) {
+                isZoomDragging = false;
 
                 int br_x = dragStartX > mouseX ? dragStartX : mouseX;
                 int br_y = dragStartY > mouseY ? dragStartY : mouseY;

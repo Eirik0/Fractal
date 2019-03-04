@@ -104,4 +104,13 @@ public class FractalManager {
     public static void updateDrawers() {
         instance.delegate.checkSplit();
     }
+
+    public static Color[] getBaseColors() {
+        return instance.colorer.getBaseColors();
+    }
+
+    public static void setBaseColors(Color[] baseColors) {
+        instance.colorer.setBaseColors(baseColors);
+        instance.delegate.requestReset();
+    }
 }
