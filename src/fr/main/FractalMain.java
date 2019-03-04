@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -31,42 +32,39 @@ public class FractalMain {
     public static void main(String[] args) {
         ComponentCreator.setCrossPlatformLookAndFeel();
 
-        // Buttons, etc
-        JButton saveButton = new JButton("Save");
-        saveButton.setFocusable(false);
+        // Main Panel
+        GamePanel mainPanel = new GamePanel("Pascal");
+        mainPanel.setPreferredSize(new Dimension(ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT));
 
-        JLabel complexLabel = createLabel("a + bi: ");
+        // Buttons, etc
+        JButton saveButton = ComponentCreator.createButton("Save", () -> saveFractal(mainPanel));
+
+        JLabel complexLabel = ComponentCreator.createLabel("a + bi: ", Color.GREEN);
 
         ComplexNumberField complexField = new ComplexNumberField();
         complexField.setText(DEFAULT_FRACTAL_TEXT);
 
-        JLabel colorLabel = createLabel("colors: ");
+        JLabel colorLabel = ComponentCreator.createLabel("colors: ", Color.GREEN);
+        JSlider colorSlider = ComponentCreator.createSlider(2, 50, FractalColorer.DEFAULT_NUM_BASE_COLORS,
+                value -> FractalManager.setNumberOfColors(value));
 
-        JSlider colorSlider = createSlider(2, 50, FractalColorer.DEFAULT_NUM_BASE_COLORS);
-        colorSlider.addChangeListener(e -> FractalManager.setNumberOfColors(colorSlider.getValue()));
+        JLabel gradientLabel = ComponentCreator.createLabel("gradient: ", Color.GREEN);
+        JSlider gradientSlider = ComponentCreator.createSlider(1, 100, FractalColorer.DEFAULT_NUM_BETWEEN_COLORS,
+                value -> FractalManager.setNumberOfBetweenColors(value));
 
-        JLabel gradientLabel = createLabel("gradient: ");
+        JButton resetColorButton = ComponentCreator.createButton("Reset Color", () -> FractalManager.resetColors());
 
-        JSlider gradientSlider = createSlider(1, 100, FractalColorer.DEFAULT_NUM_BETWEEN_COLORS);
-        gradientSlider.addChangeListener(e -> FractalManager.setNumberOfBetweenColors(gradientSlider.getValue()));
+        JButton resetZoomButton = ComponentCreator.createButton("Reset Zoom", () -> FractalManager.setFractalBounds(-2.5, -2.5, 5, 5));
 
-        JButton resetColorButton = new JButton("Reset Color");
-        resetColorButton.setFocusable(false);
-        resetColorButton.addActionListener(e -> FractalManager.resetColors());
-
-        JButton resetZoomButton = new JButton("Reset Zoom");
-        resetZoomButton.setFocusable(false);
-        resetZoomButton.addActionListener(e -> FractalManager.setFractalBounds(-2.5, -2.5, 5, 5));
-
-        JPanel buttonPanel = createButtonPanel(saveButton, complexLabel, complexField, colorLabel, colorSlider, gradientLabel, gradientSlider,
-                resetColorButton, resetZoomButton);
+        JPanel buttonPanel = createButtonPanel(
+                saveButton, Box.createHorizontalStrut(5),
+                complexLabel, complexField, Box.createHorizontalStrut(5),
+                colorLabel, colorSlider, Box.createHorizontalStrut(5),
+                gradientLabel, gradientSlider, Box.createHorizontalStrut(5),
+                resetColorButton, Box.createHorizontalStrut(5),
+                resetZoomButton);
 
         // MainFrame, etc
-        GamePanel mainPanel = new GamePanel("Pascal");
-        mainPanel.setPreferredSize(new Dimension(ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT));
-
-        saveButton.addActionListener(e -> saveFractal(mainPanel));
-
         GameStateManager.setMainPanel(mainPanel);
         GameStateManager.setGameState(new FractalGameState(GameStateManager.getMouseTracker()));
 
@@ -78,33 +76,10 @@ public class FractalMain {
         mainFrame.show();
     }
 
-    private static JLabel createLabel(String title) {
-        JLabel label = new JLabel(title);
-        label.setBackground(Color.BLACK);
-        label.setForeground(Color.GREEN);
-        return label;
-    }
-
-    private static JSlider createSlider(int minimum, int maximum, int defaultVlue) {
-        JSlider slider = new JSlider(JSlider.HORIZONTAL);
-        slider.setBackground(Color.BLACK);
-        slider.setFocusable(false);
-        slider.setMinimum(minimum);
-        slider.setMaximum(maximum);
-        slider.setSnapToTicks(true);
-        slider.setMinorTickSpacing(minimum);
-        slider.setPaintTicks(true);
-        slider.setPaintLabels(true);
-        slider.setSnapToTicks(true);
-        slider.setValue(defaultVlue);
-        return slider;
-    }
-
-    private static JPanel createButtonPanel(Component... buttons) {
-        JPanel buttonPanel = new JPanel(new FlowLayout());
-        buttonPanel.setBackground(Color.BLACK);
-        for (Component button : buttons) {
-            buttonPanel.add(button);
+    private static JPanel createButtonPanel(Component... components) {
+        JPanel buttonPanel = ComponentCreator.initComponent(new JPanel(new FlowLayout()));
+        for (Component component : components) {
+            buttonPanel.add(component);
         }
         return buttonPanel;
     }
