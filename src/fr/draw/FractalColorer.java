@@ -7,17 +7,14 @@ import gt.component.ComponentCreator;
 import gt.gameentity.DrawingMethods;
 
 public class FractalColorer implements DrawingMethods {
-    public static final int DEFAULT_NUM_BASE_COLORS = 5;
-    public static final int DEFAULT_NUM_BETWEEN_COLORS = 50;
-
     private static final Random RANDOM = new Random();
 
     private Color[] baseColors;
     private Color[] allColors;
 
-    public FractalColorer() {
-        resetBaseColors(0, DEFAULT_NUM_BASE_COLORS);
-        resetAllColors(DEFAULT_NUM_BETWEEN_COLORS);
+    public FractalColorer(int numBaseColors, int numBetweenColors) {
+        resetBaseColors(0, numBaseColors);
+        resetAllColors(numBetweenColors);
     }
 
     public void resetColors() {

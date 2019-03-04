@@ -17,7 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
-import fr.draw.FractalColorer;
 import fr.gui.ComplexNumberField;
 import gt.component.ComponentCreator;
 import gt.component.GamePanel;
@@ -28,6 +27,11 @@ public class FractalMain {
     private static final String TITLE = "Fractals";
 
     public static final String DEFAULT_FRACTAL_TEXT = "-0.1 + 0.651i";
+
+    public static final int DEFAULT_NUM_BASE_COLORS = 5;
+    public static final int DEFAULT_NUM_BETWEEN_COLORS = 50;
+
+    public static final int DEFAULT_NUM_ITERATIONS = 20000;
 
     public static void main(String[] args) {
         ComponentCreator.setCrossPlatformLookAndFeel();
@@ -44,13 +48,17 @@ public class FractalMain {
         ComplexNumberField complexField = new ComplexNumberField();
         complexField.setText(DEFAULT_FRACTAL_TEXT);
 
-        JLabel colorLabel = ComponentCreator.createLabel("colors: ", Color.GREEN);
-        JSlider colorSlider = ComponentCreator.createSlider(2, 50, FractalColorer.DEFAULT_NUM_BASE_COLORS,
+        JLabel colorLabel = ComponentCreator.createLabel("colors:", Color.GREEN);
+        JSlider colorSlider = ComponentCreator.createSlider(2, 50, DEFAULT_NUM_BASE_COLORS,
                 value -> FractalManager.setNumberOfColors(value));
 
-        JLabel gradientLabel = ComponentCreator.createLabel("gradient: ", Color.GREEN);
-        JSlider gradientSlider = ComponentCreator.createSlider(1, 100, FractalColorer.DEFAULT_NUM_BETWEEN_COLORS,
+        JLabel gradientLabel = ComponentCreator.createLabel("gradient:", Color.GREEN);
+        JSlider gradientSlider = ComponentCreator.createSlider(1, 100, DEFAULT_NUM_BETWEEN_COLORS,
                 value -> FractalManager.setNumberOfBetweenColors(value));
+
+        JLabel iterationsLabel = ComponentCreator.createLabel("iterations:", Color.GREEN);
+        JSlider iterationsSlider = ComponentCreator.createSlider(10000, 500000, DEFAULT_NUM_ITERATIONS,
+                value -> FractalManager.setNumberOfIterations(value));
 
         JButton resetColorButton = ComponentCreator.createButton("Reset Color", () -> FractalManager.resetColors());
 
@@ -61,6 +69,7 @@ public class FractalMain {
                 complexLabel, complexField, Box.createHorizontalStrut(5),
                 colorLabel, colorSlider, Box.createHorizontalStrut(5),
                 gradientLabel, gradientSlider, Box.createHorizontalStrut(5),
+                iterationsLabel, iterationsSlider, Box.createHorizontalStrut(5),
                 resetColorButton, Box.createHorizontalStrut(5),
                 resetZoomButton);
 

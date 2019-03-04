@@ -12,8 +12,6 @@ import gt.gameentity.CartesianSpace;
 import gt.gameentity.DrawingMethods;
 
 public class FractalManager {
-    private static final int MAX_ITERATIONS = 20000;
-
     private static final FractalManager instance = new FractalManager();
 
     private Fractal fractal;
@@ -21,10 +19,12 @@ public class FractalManager {
     private final FractalColorer colorer;
     private final FractalDrawerDelegate delegate;
 
+    private int numIterations = FractalMain.DEFAULT_NUM_ITERATIONS;
+
     private FractalManager() {
         fractal = ComplexNumberField.textToFractal(FractalMain.DEFAULT_FRACTAL_TEXT);
         cs = new CartesianSpace(ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT, -2.5, -2.5, 5, 5);
-        colorer = new FractalColorer();
+        colorer = new FractalColorer(FractalMain.DEFAULT_NUM_BASE_COLORS, FractalMain.DEFAULT_NUM_BETWEEN_COLORS);
         delegate = new FractalDrawerDelegate(ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT);
     }
 
@@ -43,17 +43,22 @@ public class FractalManager {
         instance.delegate.requestReset();
     }
 
+    public static void setNumberOfIterations(int numIterations) {
+        instance.numIterations = numIterations;
+        instance.delegate.requestReset();
+    }
+
     public static Color getColor(double imageX, double imageY) {
         double x = instance.cs.getX(imageX);
         double y = instance.cs.getY(imageY);
-        return instance.colorer.getColor(instance.fractal.getIterations(x, y, MAX_ITERATIONS), MAX_ITERATIONS);
+        return instance.colorer.getColor(instance.fractal.getIterations(x, y, instance.numIterations), instance.numIterations);
     }
 
     public static Color getColor(double imageX, double imageY, int calculationsX) {
         double x = instance.cs.getX(imageX);
         double y = instance.cs.getY(imageY);
         double dx = instance.cs.getWidth(1.0 / calculationsX);
-        return instance.colorer.getColor(instance.fractal.getIterations(x, y, calculationsX, dx, MAX_ITERATIONS), MAX_ITERATIONS);
+        return instance.colorer.getColor(instance.fractal.getIterations(x, y, calculationsX, dx, instance.numIterations), instance.numIterations);
     }
 
     public static void setFractal(Fractal fractal) {
