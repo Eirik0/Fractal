@@ -95,4 +95,8 @@ public class FractalManager {
         instance.cs.move(x, y);
         instance.delegate.requestReset();
     }
+
+    public static void updateDrawers() {
+        instance.delegate.checkSplit();
+    }
 }

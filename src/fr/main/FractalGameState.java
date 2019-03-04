@@ -15,6 +15,7 @@ public class FractalGameState implements GameState {
 
     @Override
     public void update(double dt) {
+        FractalManager.updateDrawers();
     }
 
     @Override

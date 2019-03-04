@@ -69,8 +69,6 @@ public class FractalDrawerDelegate {
             return requestNewImage(imageWidth, imageHeight);
         }
 
-        checkSplit();
-
         return createImageFromDrawers();
     }
 
@@ -91,7 +89,7 @@ public class FractalDrawerDelegate {
         return currentImage;
     }
 
-    private void checkSplit() {
+    public void checkSplit() {
         FractalDrawer firstFinished = null;
         for (FractalDrawer drawer : drawers) {
             if (drawer.isDrawingComplete()) {
