@@ -33,7 +33,7 @@ public class FractalMain {
         ComponentCreator.setCrossPlatformLookAndFeel();
 
         // Main Panel
-        GamePanel mainPanel = new GamePanel("Pascal");
+        GamePanel mainPanel = new GamePanel(TITLE);
         mainPanel.setPreferredSize(new Dimension(ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT));
 
         // Buttons, etc
