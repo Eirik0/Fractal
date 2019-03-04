@@ -9,6 +9,7 @@ import fr.fractal.Fractal;
 import fr.gui.ComplexNumberField;
 import gt.component.ComponentCreator;
 import gt.gameentity.CartesianSpace;
+import gt.gameentity.DrawingMethods;
 
 public class FractalManager {
     private static final int MAX_ITERATIONS = 20000;
@@ -60,7 +61,9 @@ public class FractalManager {
         instance.delegate.requestReset();
     }
 
-    public static BufferedImage requestImage(int imageWidth, int imageHeight) {
+    public static BufferedImage requestImage() {
+        int imageWidth = DrawingMethods.roundS(instance.cs.getImageWidth());
+        int imageHeight = DrawingMethods.roundS(instance.cs.getImageHeight());
         return instance.delegate.requestImage(imageWidth, imageHeight);
     }
 
@@ -83,8 +86,13 @@ public class FractalManager {
         instance.delegate.requestReset();
     }
 
-    public static void zoom(int n) {
-        instance.cs.zoom(-0.1 * n);
+    public static void zoom(double n, int x, int y) {
+        instance.cs.zoom(n, x, y);
+        instance.delegate.requestReset();
+    }
+
+    public static void move(int x, int y) {
+        instance.cs.move(x, y);
         instance.delegate.requestReset();
     }
 }
