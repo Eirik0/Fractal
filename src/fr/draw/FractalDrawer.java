@@ -1,27 +1,27 @@
 package fr.draw;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 
-import fr.fractal.Fractal;
 import fr.main.FractalManager;
-import gt.gameentity.DrawingMethods;
+import gt.async.ThreadWorker;
+import gt.gameentity.Drawable;
 
-public class FractalDrawer implements DrawingMethods {
+public class FractalDrawer implements Drawable {
     private static final int INITIAL_LOG_CP = 5;
     private static final double MIN_LOG_CP = -3;
 
-    private BufferedImage image;
-    private Graphics2D graphics;
+    private final BufferedImage image;
+    private final Graphics2D graphics;
 
-    private Fractal fractal;
+    private volatile boolean noStopRequested = true;
+    private volatile boolean isDrawingComplete = false;
 
-    private boolean noStopRequested = true;
-    private boolean isDrawingComplete = false;
+    private final int x0;
+    private final int y0;
+    private final int x1;
+    private final int y1;
 
     private int currentX;
     private int initialX;
@@ -30,53 +30,45 @@ public class FractalDrawer implements DrawingMethods {
     // 5 -> 32x32 blocks -3 -> 1x1 blocks with 64 calculations
     private int logCP;
 
-    private int x0;
-    private int y0;
-    private int x1;
-    private int y1;
+    public FractalDrawer(BufferedImage image, int x0, int y0, int x1, int y1) {
+        this.x0 = x0;
+        this.y0 = y0;
+        this.x1 = x1;
+        this.y1 = y1;
 
-    public FractalDrawer(BufferedImage currentImage, int x0, int y0, int x1, int y1) {
-        init(fractal, x0, y0, x1, y1, x0, INITIAL_LOG_CP);
-        setImage(new BufferedImage(x1 - x0, y1 - y0, BufferedImage.TYPE_INT_RGB));
-        graphics.drawImage(currentImage, 0, 0, null);
-        startDrawing();
+        initialX = x0;
+        logCP = INITIAL_LOG_CP;
+
+        this.image = image;
+        graphics = image.createGraphics();
     }
 
     private FractalDrawer(BufferedImage image, int x0, int y0, int x1, int y1, int initialX, int logCP) {
-        init(fractal, x0, y0, x1, y1, initialX, logCP);
-        setImage(image);
-        startDrawing();
-    }
-
-    private void init(Fractal fractal, int x0, int y0, int x1, int y1, int initialX, int logCP) {
-        this.fractal = fractal;
-
         this.x0 = x0;
         this.y0 = y0;
-
         this.x1 = x1;
         this.y1 = y1;
 
         this.initialX = initialX;
         this.logCP = logCP;
-    }
 
-    private void setImage(BufferedImage image) {
         this.image = image;
         graphics = image.createGraphics();
     }
 
-    private void startDrawing() {
-        new Thread(() -> {
+    public void startDrawing(ThreadWorker worker) {
+        worker.workOn(() -> {
             while (noStopRequested && logCP >= MIN_LOG_CP) {
                 drawSquares();
                 if (noStopRequested) {
                     --logCP;
                 }
             }
-
             isDrawingComplete = true;
-        }).start();
+            synchronized (this) {
+                notify();
+            }
+        });
     }
 
     private void drawSquares() {
@@ -104,12 +96,22 @@ public class FractalDrawer implements DrawingMethods {
         initialX = x0;
     }
 
-    public void drawOn(Graphics g) {
+    @Override
+    public void drawOn(Graphics2D g) {
         g.drawImage(image, x0, y0, getImageWidth(), getImageHeight(), null);
     }
 
-    public void requestStop() {
+    public void stopAndWait() {
         noStopRequested = false;
+        synchronized (this) {
+            while (!isDrawingComplete) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
     public boolean isDrawingComplete() {
@@ -126,17 +128,16 @@ public class FractalDrawer implements DrawingMethods {
         return getImageHeight() > 1;
     }
 
-    public List<FractalDrawer> splitVertically() {
-        requestStop();
+    public FractalDrawer[] splitVertically() {
+        stopAndWait();
 
         BufferedImage top = splitImage(0, 0, getImageWidth(), getImageHeight() / 2);
         BufferedImage bottom = splitImage(0, getImageHeight() / 2, getImageWidth(), getImageHeight() - (getImageHeight() / 2));
 
-        List<FractalDrawer> drawers = new ArrayList<>();
-        drawers.add(new FractalDrawer(top, x0, y0, x1, y0 + getImageHeight() / 2, currentX, logCP));
-        drawers.add(new FractalDrawer(bottom, x0, y0 + getImageHeight() / 2, x1, y1, currentX, logCP));
-
-        return drawers;
+        return new FractalDrawer[] {
+                new FractalDrawer(top, x0, y0, x1, y0 + getImageHeight() / 2, currentX, logCP),
+                new FractalDrawer(bottom, x0, y0 + getImageHeight() / 2, x1, y1, currentX, logCP)
+        };
     }
 
     private BufferedImage splitImage(int x, int y, int width, int height) {

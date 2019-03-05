@@ -4,16 +4,20 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
+import gt.async.ThreadWorker;
 import gt.gameentity.DrawingMethods;
 
 public class FractalDrawerDelegate {
     private final int horizontalDrawers;
     private final int verticalDrawers;
 
-    private List<FractalDrawer> drawers = new ArrayList<>();
+    private final BlockingQueue<ThreadWorker> availableWorkers;
+    private final List<FractalDrawer> drawers = new ArrayList<>();
 
-    private boolean needsNewImage = false;
+    private volatile boolean needsNewImage = false;
 
     private BufferedImage currentImage;
     private Graphics2D currentGraphics;
@@ -35,6 +39,11 @@ public class FractalDrawerDelegate {
         }
         verticalDrawers = coresToUse / horizontalDrawers;
 
+        availableWorkers = new ArrayBlockingQueue<>(verticalDrawers * horizontalDrawers);
+        for (int i = 0; i < verticalDrawers * horizontalDrawers; ++i) {
+            availableWorkers.add(new ThreadWorker(worker -> workerComplete(worker)));
+        }
+
         setUpDrawers(imageWidth, imageHeight);
     }
 
@@ -45,7 +54,7 @@ public class FractalDrawerDelegate {
             BufferedImage oldImage = currentImage;
             currentImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
             currentGraphics = currentImage.createGraphics();
-            currentGraphics.drawImage(oldImage, (imageWidth - oldImage.getWidth()) / 2, (imageHeight - oldImage.getHeight()) / 2, null);
+            currentGraphics.drawImage(oldImage, 0, 0, imageWidth, imageHeight, null);
         }
 
         for (int x = 0; x < horizontalDrawers; ++x) {
@@ -54,8 +63,18 @@ public class FractalDrawerDelegate {
                 int y0 = DrawingMethods.roundS((double) imageHeight * y / verticalDrawers);
                 int x1 = DrawingMethods.roundS((double) imageWidth * (x + 1) / horizontalDrawers);
                 int y1 = DrawingMethods.roundS((double) imageHeight * (y + 1) / verticalDrawers);
-                drawers.add(new FractalDrawer(currentImage.getSubimage(x0, y0, x1 - x0, y1 - y0), x0, y0, x1, y1));
+                FractalDrawer drawer = new FractalDrawer(currentImage.getSubimage(x0, y0, x1 - x0, y1 - y0), x0, y0, x1, y1);
+                drawers.add(drawer);
+                startWork(drawer);
             }
+        }
+    }
+
+    private void startWork(FractalDrawer drawer) {
+        try {
+            drawer.startDrawing(availableWorkers.take());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -66,20 +85,18 @@ public class FractalDrawerDelegate {
     public BufferedImage requestImage(int imageWidth, int imageHeight) {
         if (needsNewImage) {
             needsNewImage = false;
-            return requestNewImage(imageWidth, imageHeight);
+            createNewImage(imageWidth, imageHeight);
         }
 
         return createImageFromDrawers();
     }
 
-    private BufferedImage requestNewImage(int imageWidth, int imageHeight) {
+    private void createNewImage(int imageWidth, int imageHeight) {
         for (FractalDrawer drawer : drawers) {
-            drawer.requestStop();
+            drawer.stopAndWait();
         }
 
         setUpDrawers(imageWidth, imageHeight);
-
-        return createImageFromDrawers();
     }
 
     private BufferedImage createImageFromDrawers() {
@@ -110,7 +127,11 @@ public class FractalDrawerDelegate {
 
             if (!slowest.isDrawingComplete() && slowest.isSplittable()) {
                 drawers.remove(slowest);
-                drawers.addAll(slowest.splitVertically());
+                FractalDrawer[] split = slowest.splitVertically();
+                drawers.add(split[0]);
+                startWork(split[0]);
+                drawers.add(split[1]);
+                startWork(split[1]);
             }
         }
     }
@@ -123,5 +144,9 @@ public class FractalDrawerDelegate {
             }
         }
         return slowest;
+    }
+
+    private void workerComplete(ThreadWorker worker) {
+        availableWorkers.add(worker);
     }
 }
