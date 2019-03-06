@@ -14,10 +14,12 @@ public class FractalDrawerDelegate {
     private final int horizontalDrawers;
     private final int verticalDrawers;
 
+    private final int maxAvailableWorkers;
     private final BlockingQueue<ThreadWorker> availableWorkers;
     private final List<FractalDrawer> drawers = new ArrayList<>();
 
     private volatile boolean needsNewImage = false;
+    private volatile boolean useMaxLogCP = false;
 
     private BufferedImage currentImage;
     private Graphics2D currentGraphics;
@@ -39,8 +41,9 @@ public class FractalDrawerDelegate {
         }
         verticalDrawers = coresToUse / horizontalDrawers;
 
-        availableWorkers = new ArrayBlockingQueue<>(verticalDrawers * horizontalDrawers);
-        for (int i = 0; i < verticalDrawers * horizontalDrawers; ++i) {
+        maxAvailableWorkers = verticalDrawers * horizontalDrawers;
+        availableWorkers = new ArrayBlockingQueue<>(maxAvailableWorkers);
+        for (int i = 0; i < maxAvailableWorkers; ++i) {
             availableWorkers.add(new ThreadWorker(worker -> workerComplete(worker)));
         }
 
@@ -54,16 +57,19 @@ public class FractalDrawerDelegate {
             BufferedImage oldImage = currentImage;
             currentImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
             currentGraphics = currentImage.createGraphics();
-            currentGraphics.drawImage(oldImage, 0, 0, imageWidth, imageHeight, null);
+            if (!useMaxLogCP) {
+                currentGraphics.drawImage(oldImage, 0, 0, imageWidth, imageHeight, null);
+            }
         }
 
+        int logCP = useMaxLogCP ? FractalDrawer.MIN_LOG_CP : FractalDrawer.INITIAL_LOG_CP;
         for (int x = 0; x < horizontalDrawers; ++x) {
             for (int y = 0; y < verticalDrawers; ++y) {
                 int x0 = DrawingMethods.roundS((double) imageWidth * x / horizontalDrawers);
                 int y0 = DrawingMethods.roundS((double) imageHeight * y / verticalDrawers);
                 int x1 = DrawingMethods.roundS((double) imageWidth * (x + 1) / horizontalDrawers);
                 int y1 = DrawingMethods.roundS((double) imageHeight * (y + 1) / verticalDrawers);
-                FractalDrawer drawer = new FractalDrawer(currentImage.getSubimage(x0, y0, x1 - x0, y1 - y0), x0, y0, x1, y1);
+                FractalDrawer drawer = new FractalDrawer(currentImage.getSubimage(x0, y0, x1 - x0, y1 - y0), x0, y0, x1, y1, x0, logCP);
                 drawers.add(drawer);
                 startWork(drawer);
             }
@@ -78,8 +84,25 @@ public class FractalDrawerDelegate {
         }
     }
 
+    public boolean isDrawingComplete() {
+        if (availableWorkers.size() < maxAvailableWorkers || drawers.size() < maxAvailableWorkers) {
+            return false;
+        }
+        for (FractalDrawer drawer : drawers) {
+            if (!drawer.isDrawingComplete()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void requestReset() {
+        requestReset(false);
+    }
+
+    public void requestReset(boolean useMaxLogCP) {
         needsNewImage = true;
+        this.useMaxLogCP = useMaxLogCP;
     }
 
     public BufferedImage requestImage(int imageWidth, int imageHeight) {
@@ -116,16 +139,11 @@ public class FractalDrawerDelegate {
         }
 
         if (firstFinished != null) {
-            firstFinished.drawOn(currentGraphics);
-            drawers.remove(firstFinished);
-
-            if (drawers.size() == 0 || drawers.size() >= horizontalDrawers * verticalDrawers) {
-                return;
-            }
-
             FractalDrawer slowest = findSlowestDrawer();
 
             if (!slowest.isDrawingComplete() && slowest.isSplittable()) {
+                firstFinished.drawOn(currentGraphics);
+                drawers.remove(firstFinished);
                 drawers.remove(slowest);
                 FractalDrawer[] split = slowest.splitVertically();
                 drawers.add(split[0]);
@@ -139,8 +157,9 @@ public class FractalDrawerDelegate {
     private FractalDrawer findSlowestDrawer() {
         FractalDrawer slowest = drawers.get(0);
         for (int i = 1; i < drawers.size(); ++i) {
-            if (drawers.get(i).isSlowerThan(slowest)) {
-                slowest = drawers.get(i);
+            FractalDrawer drawer = drawers.get(i);
+            if (!drawer.isDrawingComplete() && drawer.isSlowerThan(slowest)) {
+                slowest = drawer;
             }
         }
         return slowest;

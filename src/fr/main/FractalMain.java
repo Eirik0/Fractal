@@ -5,13 +5,9 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -19,6 +15,7 @@ import javax.swing.JSlider;
 
 import fr.gui.ColorSelectionDialog;
 import fr.gui.ComplexNumberField;
+import fr.gui.SaveFractalDialog;
 import gt.component.ComponentCreator;
 import gt.component.GamePanel;
 import gt.component.MainFrame;
@@ -42,7 +39,7 @@ public class FractalMain {
         mainPanel.setPreferredSize(new Dimension(ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT));
 
         // Buttons, etc
-        JButton saveButton = ComponentCreator.createButton("Save", () -> saveFractal(mainPanel));
+        JButton saveButton = ComponentCreator.createButton("Save", () -> SaveFractalDialog.show(mainPanel));
 
         JLabel complexLabel = ComponentCreator.createLabel("a + bi: ", Color.GREEN);
 
@@ -79,7 +76,7 @@ public class FractalMain {
 
         // MainFrame, etc
         GameStateManager.setMainPanel(mainPanel);
-        GameStateManager.setGameState(new FractalGameState(GameStateManager.getMouseTracker()));
+        GameStateManager.setGameState(new FractalGameState());
 
         MainFrame mainFrame = new MainFrame(TITLE, mainPanel);
 
@@ -103,17 +100,5 @@ public class FractalMain {
         glassPanel.add(buttonPanel, BorderLayout.NORTH);
         glassPane.add(glassPanel);
         return glassPane;
-    }
-
-    public static void saveFractal(JPanel parent) {
-        JFileChooser jFileChooser = new JFileChooser(System.getProperty("user.home") + File.separator + "Desktop");
-        if (jFileChooser.showSaveDialog(parent) == JFileChooser.APPROVE_OPTION) {
-            File file = jFileChooser.getSelectedFile();
-            try {
-                ImageIO.write(FractalManager.requestImage(), "bmp", file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

@@ -27,7 +27,6 @@ public class ColorSelectionDialog {
     private ColorSelectionDialog() {
         frame = new JFrame("Select Colors");
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
         rebuild();
     }
 
@@ -77,6 +76,7 @@ public class ColorSelectionDialog {
     public static void show() {
         instance.rebuild();
         instance.frame.pack();
+        instance.frame.setLocationRelativeTo(null);
         instance.frame.setVisible(true);
     }
 }

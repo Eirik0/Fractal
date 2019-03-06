@@ -9,8 +9,8 @@ import gt.async.ThreadWorker;
 import gt.gameentity.Drawable;
 
 public class FractalDrawer implements Drawable {
-    private static final int INITIAL_LOG_CP = 5;
-    private static final double MIN_LOG_CP = -3;
+    public static final int INITIAL_LOG_CP = 5;
+    public static final int MIN_LOG_CP = -3;
 
     private final BufferedImage image;
     private final Graphics2D graphics;
@@ -30,20 +30,7 @@ public class FractalDrawer implements Drawable {
     // 5 -> 32x32 blocks -3 -> 1x1 blocks with 64 calculations
     private int logCP;
 
-    public FractalDrawer(BufferedImage image, int x0, int y0, int x1, int y1) {
-        this.x0 = x0;
-        this.y0 = y0;
-        this.x1 = x1;
-        this.y1 = y1;
-
-        initialX = x0;
-        logCP = INITIAL_LOG_CP;
-
-        this.image = image;
-        graphics = image.createGraphics();
-    }
-
-    private FractalDrawer(BufferedImage image, int x0, int y0, int x1, int y1, int initialX, int logCP) {
+    public FractalDrawer(BufferedImage image, int x0, int y0, int x1, int y1, int initialX, int logCP) {
         this.x0 = x0;
         this.y0 = y0;
         this.x1 = x1;

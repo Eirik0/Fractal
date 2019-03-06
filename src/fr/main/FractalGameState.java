@@ -2,15 +2,15 @@ package fr.main;
 
 import java.awt.Graphics2D;
 
-import gt.component.MouseTracker;
 import gt.gamestate.GameState;
+import gt.gamestate.GameStateManager;
 import gt.gamestate.UserInput;
 
 public class FractalGameState implements GameState {
     private final FractalUserInputHandler inputHandler;
 
-    public FractalGameState(MouseTracker mouseTracker) {
-        inputHandler = new FractalUserInputHandler(mouseTracker);
+    public FractalGameState() {
+        inputHandler = new FractalUserInputHandler(GameStateManager.getMouseTracker());
     }
 
     @Override
@@ -26,7 +26,7 @@ public class FractalGameState implements GameState {
 
     @Override
     public void setSize(int width, int height) {
-        FractalManager.setImageSize(width, height);
+        FractalManager.setImageSize(width, height, false);
         inputHandler.setSize(width, height);
     }
 

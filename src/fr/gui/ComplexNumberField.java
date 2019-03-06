@@ -8,11 +8,13 @@ import fr.fractal.Fractal;
 import fr.fractal.JuliaSet;
 import fr.fractal.MandelbrotSet;
 import fr.main.FractalManager;
+import gt.component.ComponentCreator;
 import gt.gamestate.GameStateManager;
 
 @SuppressWarnings("serial")
 public class ComplexNumberField extends JTextField {
     public ComplexNumberField() {
+        ComponentCreator.initComponent(this);
         setColumns(10);
         addActionListener(e -> {
             FractalManager.setFractal(textToFractal(getText()));
