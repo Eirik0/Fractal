@@ -108,7 +108,7 @@ public class FractalDrawer implements Drawable {
     public boolean isSlowerThan(FractalDrawer other) {
         return (logCP > other.logCP)
                 || (logCP == other.logCP && getImageHeight() > other.getImageHeight())
-                || (getImageHeight() == other.getImageHeight() && currentX < other.currentX);
+                || (getImageHeight() == other.getImageHeight() && currentX - initialX < other.currentX - other.initialX);
     }
 
     public boolean isSplittable() {
