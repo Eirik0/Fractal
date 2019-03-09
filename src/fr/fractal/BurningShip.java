@@ -1,25 +1,12 @@
 package fr.fractal;
 
-public class JuliaSet implements Fractal {
-    private final double cx;
-    private final double cy;
-
-    public JuliaSet(double cx, double cy) {
-        this.cx = cx;
-        this.cy = cy;
-    }
-
-    public double getCx() {
-        return cx;
-    }
-
-    public double getCy() {
-        return cy;
-    }
-
+public class BurningShip implements Fractal {
     @Override
     public int getIterations(double x, double y, int maxIterations) {
         int count = 0;
+
+        double x0 = x;
+        double y0 = y;
 
         double xsq = x * x;
         double ysq = y * y;
@@ -29,8 +16,8 @@ public class JuliaSet implements Fractal {
             ysq = y * y;
             double xy = x * y;
 
-            x = xsq - ysq + cx;
-            y = xy + xy + cy;
+            x = xsq - ysq + x0;
+            y = Math.abs(xy + xy) + y0;
 
             ++count;
         }

@@ -1,20 +1,12 @@
 package fr.fractal;
 
-public class JuliaSet implements Fractal {
+public class BurningShipJuliaSet implements Fractal {
     private final double cx;
     private final double cy;
 
-    public JuliaSet(double cx, double cy) {
+    public BurningShipJuliaSet(double cx, double cy) {
         this.cx = cx;
         this.cy = cy;
-    }
-
-    public double getCx() {
-        return cx;
-    }
-
-    public double getCy() {
-        return cy;
     }
 
     @Override
@@ -30,7 +22,7 @@ public class JuliaSet implements Fractal {
             double xy = x * y;
 
             x = xsq - ysq + cx;
-            y = xy + xy + cy;
+            y = Math.abs(xy + xy) + cy;
 
             ++count;
         }

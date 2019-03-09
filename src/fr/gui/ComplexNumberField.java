@@ -1,9 +1,13 @@
 package fr.gui;
 
 import java.awt.Color;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 import javax.swing.JTextField;
 
+import fr.fractal.BurningShip;
+import fr.fractal.BurningShipJuliaSet;
 import fr.fractal.Fractal;
 import fr.fractal.JuliaSet;
 import fr.fractal.MandelbrotSet;
@@ -36,9 +40,16 @@ public class ComplexNumberField extends JTextField {
 
     public static Fractal textToFractal(String text) {
         text = text == null ? "" : text.replaceAll("\\s+", "");
+        if (text.toLowerCase().startsWith("b")) {
+            return textToFractal(text.substring(1), () -> new BurningShip(), (re, im) -> new BurningShipJuliaSet(re.doubleValue(), im.doubleValue()));
+        } else {
+            return textToFractal(text, () -> new MandelbrotSet(), (re, im) -> new JuliaSet(re.doubleValue(), im.doubleValue()));
+        }
+    }
 
+    private static Fractal textToFractal(String text, Supplier<Fractal> zFractal, BiFunction<Double, Double, Fractal> z0Fractal) {
         if (text.equals("")) {
-            return new MandelbrotSet();
+            return zFractal.get();
         }
 
         boolean firstIsNegative = false;
@@ -55,9 +66,9 @@ public class ComplexNumberField extends JTextField {
 
         if (!containsPlus && !containsMinus) {
             if (containsI) {
-                return new JuliaSet(0, parseImaginary(text, firstIsNegative));
+                return z0Fractal.apply(Double.valueOf(0), Double.valueOf(parseImaginary(text, firstIsNegative)));
             } else {
-                return new JuliaSet(parseReal(text, firstIsNegative), 0);
+                return z0Fractal.apply(Double.valueOf(parseReal(text, firstIsNegative)), Double.valueOf(0));
             }
         }
 
@@ -81,9 +92,9 @@ public class ComplexNumberField extends JTextField {
         }
 
         if (split[0].contains("i")) {
-            return new JuliaSet(parseReal(split[1], secondIsNegative), parseImaginary(split[0], firstIsNegative));
+            return z0Fractal.apply(Double.valueOf(parseReal(split[1], secondIsNegative)), Double.valueOf(parseImaginary(split[0], firstIsNegative)));
         } else {
-            return new JuliaSet(parseReal(split[0], firstIsNegative), parseImaginary(split[1], secondIsNegative));
+            return z0Fractal.apply(Double.valueOf(parseReal(split[0], firstIsNegative)), Double.valueOf(parseImaginary(split[1], secondIsNegative)));
         }
     }
 
