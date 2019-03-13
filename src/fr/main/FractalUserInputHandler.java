@@ -108,11 +108,13 @@ public class FractalUserInputHandler implements Drawable, Sizable {
         case LEFT_BUTTON_RELEASED:
             if (isZoomDragging) {
                 isZoomDragging = false;
-
                 int br_x = dragStartX > mouseX ? dragStartX : mouseX;
                 int br_y = dragStartY > mouseY ? dragStartY : mouseY;
-
-                FractalManager.zoomTo(getDragUpperLeftX(), getDragUpperLeftY(), br_x, br_y);
+                int ul_x = getDragUpperLeftX();
+                int ul_y = getDragUpperLeftY();
+                if (br_x - ul_x > 3 || br_y - ul_y > 3) {
+                    FractalManager.zoomTo(ul_x, ul_y, br_x, br_y);
+                }
             }
             leftButtonPressed = false;
             break;
