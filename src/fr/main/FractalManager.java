@@ -76,9 +76,9 @@ public class FractalManager {
         return instance.delegate.isDrawingComplete();
     }
 
-    public static void setImageSize(int width, int height, boolean useMaxLogCP) {
+    public static void setImageSize(int width, int height, boolean savingImage) {
         instance.cs.setSize(width, height);
-        instance.delegate.requestReset(useMaxLogCP);
+        instance.delegate.requestReset(savingImage);
     }
 
     public static int getImageWidth() {

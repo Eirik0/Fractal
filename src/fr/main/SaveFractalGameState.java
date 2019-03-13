@@ -26,6 +26,7 @@ public class SaveFractalGameState implements GameState {
         FractalManager.updateDrawers();
         if (FractalManager.isDrawingComplete()) {
             SaveFractalDialog.writeFractalToFile(file);
+            FractalMain.enableButtonsAndSliders(true);
             GameStateManager.setGameState(new FractalGameState());
         }
     }

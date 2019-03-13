@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import fr.main.FractalMain;
 import fr.main.FractalManager;
 import fr.main.SaveFractalGameState;
 import gt.component.ComponentCreator;
@@ -120,6 +121,7 @@ public class SaveFractalDialog {
             System.err.println(e.getMessage());
             return;
         }
+        FractalMain.enableButtonsAndSliders(false);
         GameStateManager.setGameState(new SaveFractalGameState(file, imageWidth, imageHeight));
     }
 

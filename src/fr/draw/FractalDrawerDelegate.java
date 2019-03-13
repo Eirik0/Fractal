@@ -19,7 +19,7 @@ public class FractalDrawerDelegate {
     private final List<FractalDrawer> drawers = new ArrayList<>();
 
     private volatile boolean needsNewImage = false;
-    private volatile boolean useMaxLogCP = false;
+    private volatile boolean savingImage = false;
 
     private BufferedImage currentImage;
     private Graphics2D currentGraphics;
@@ -53,16 +53,16 @@ public class FractalDrawerDelegate {
     private void setUpDrawers(int imageWidth, int imageHeight) {
         drawers.clear();
 
-        if (currentImage.getWidth() != imageWidth || currentImage.getHeight() != imageHeight) {
+        if (currentImage.getWidth() != imageWidth || currentImage.getHeight() != imageHeight || savingImage) {
             BufferedImage oldImage = currentImage;
             currentImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
             currentGraphics = currentImage.createGraphics();
-            if (!useMaxLogCP) {
+            if (!savingImage) {
                 currentGraphics.drawImage(oldImage, 0, 0, imageWidth, imageHeight, null);
             }
         }
 
-        int logCP = useMaxLogCP ? FractalDrawer.MIN_LOG_CP : FractalDrawer.INITIAL_LOG_CP;
+        int logCP = savingImage ? FractalDrawer.MIN_LOG_CP : FractalDrawer.INITIAL_LOG_CP;
         for (int x = 0; x < horizontalDrawers; ++x) {
             for (int y = 0; y < verticalDrawers; ++y) {
                 int x0 = DrawingMethods.roundS((double) imageWidth * x / horizontalDrawers);
@@ -100,9 +100,9 @@ public class FractalDrawerDelegate {
         requestReset(false);
     }
 
-    public void requestReset(boolean useMaxLogCP) {
+    public void requestReset(boolean savingImage) {
         needsNewImage = true;
-        this.useMaxLogCP = useMaxLogCP;
+        this.savingImage = savingImage;
     }
 
     public BufferedImage requestImage(int imageWidth, int imageHeight) {

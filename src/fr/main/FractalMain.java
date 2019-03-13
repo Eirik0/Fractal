@@ -5,13 +5,15 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 
 import fr.gui.ColorSelectionDialog;
 import fr.gui.ComplexNumberField;
@@ -30,6 +32,8 @@ public class FractalMain {
     public static final int DEFAULT_NUM_BETWEEN_COLORS = 50;
 
     public static final int DEFAULT_NUM_ITERATIONS = 20000;
+
+    private static final List<Component> buttonsAndSliders = new ArrayList<>();
 
     public static void main(String[] args) {
         ComponentCreator.setCrossPlatformLookAndFeel();
@@ -63,7 +67,6 @@ public class FractalMain {
         JButton configureColorButton = ComponentCreator.createButton("C", () -> ColorSelectionDialog.show());
 
         JButton resetZoomButton = ComponentCreator.createButton("Reset Zoom", () -> FractalManager.setFractalBounds(-2.5, -2.5, 5, 5));
-
         JPanel buttonPanel = createButtonPanel(
                 complexLabel, complexField, Box.createHorizontalStrut(5),
                 colorLabel, colorSlider,
@@ -80,8 +83,11 @@ public class FractalMain {
 
         MainFrame mainFrame = new MainFrame(TITLE, mainPanel);
 
-        JPanel overlayPanel = createButtonOverlay(buttonPanel, mainFrame.getFrame());
-        overlayPanel.setVisible(true);
+        JPanel glassPane = (JPanel) mainFrame.getFrame().getGlassPane();
+        JPanel glassPanel = new JPanel(new BorderLayout());
+        glassPanel.add(buttonPanel, BorderLayout.NORTH);
+        glassPane.add(glassPanel);
+        glassPane.setVisible(true);
 
         mainFrame.show();
     }
@@ -90,15 +96,16 @@ public class FractalMain {
         JPanel buttonPanel = ComponentCreator.initComponent(new JPanel(new FlowLayout()));
         for (Component component : components) {
             buttonPanel.add(component);
+            if (component instanceof JButton || component instanceof JSlider || component instanceof JTextField) {
+                buttonsAndSliders.add(component);
+            }
         }
         return buttonPanel;
     }
 
-    private static JPanel createButtonOverlay(JPanel buttonPanel, JFrame mainFrame) {
-        JPanel glassPane = (JPanel) mainFrame.getGlassPane();
-        JPanel glassPanel = new JPanel(new BorderLayout());
-        glassPanel.add(buttonPanel, BorderLayout.NORTH);
-        glassPane.add(glassPanel);
-        return glassPane;
+    public static void enableButtonsAndSliders(boolean enable) {
+        for (Component component : buttonsAndSliders) {
+            component.setEnabled(enable);
+        }
     }
 }
