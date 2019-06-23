@@ -9,7 +9,6 @@ import java.util.function.Consumer;
 
 import javax.imageio.ImageIO;
 import javax.swing.Box;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -20,12 +19,14 @@ import fr.main.FractalMain;
 import fr.main.FractalManager;
 import fr.main.SaveFractalGameState;
 import gt.component.ComponentCreator;
+import gt.component.GamePanel;
+import gt.component.JavaGameImage;
 import gt.gamestate.GameStateManager;
 
 public class SaveFractalDialog {
     private static final SaveFractalDialog instance = new SaveFractalDialog();
 
-    private JFrame frame;
+    private final JFrame frame;
     private JTextField widthTextField;
     private JTextField heightTextField;
 
@@ -34,7 +35,7 @@ public class SaveFractalDialog {
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     }
 
-    private void rebuild(JComponent parent) {
+    private void rebuild(GamePanel parent) {
         // Buttons
         JPanel buttonPanel = ComponentCreator.initComponent(new JPanel(new FlowLayout()));
         buttonPanel.add(ComponentCreator.createButton("Save Current", () -> showSaveFileDialog(parent, SaveFractalDialog::writeFractalToFile)));
@@ -52,7 +53,7 @@ public class SaveFractalDialog {
         frame.setContentPane(mainPanel);
     }
 
-    private void showChooseResolutionDialog(JComponent parent) {
+    private void showChooseResolutionDialog(GamePanel parent) {
         // Top panel
         widthTextField = createTextField(Integer.toString(FractalManager.getImageWidth()));
         heightTextField = createTextField(Integer.toString(FractalManager.getImageHeight()));
@@ -68,7 +69,8 @@ public class SaveFractalDialog {
         topPanel.add(inputPanel, BorderLayout.CENTER);
         // Buttons
         JPanel buttonPanel = ComponentCreator.initComponent(new JPanel(new FlowLayout()));
-        buttonPanel.add(ComponentCreator.createButton("Save", () -> showSaveFileDialog(parent, SaveFractalDialog::setSaveFractalState)));
+        buttonPanel.add(ComponentCreator.createButton("Save",
+                () -> showSaveFileDialog(parent, file -> setSaveFractalState(parent.getGameStateManager(), file))));
         buttonPanel.add(Box.createHorizontalStrut(10));
         buttonPanel.add(ComponentCreator.createButton("Close", () -> frame.setVisible(false)));
         // Main panel
@@ -89,14 +91,14 @@ public class SaveFractalDialog {
         return widthTextField;
     }
 
-    public static void show(JComponent parent) {
+    public static void show(GamePanel parent) {
         instance.rebuild(parent);
         instance.frame.pack();
         instance.frame.setLocationRelativeTo(null);
         instance.frame.setVisible(true);
     }
 
-    private static void showSaveFileDialog(JComponent parent, Consumer<File> fileConsumer) {
+    private static void showSaveFileDialog(GamePanel parent, Consumer<File> fileConsumer) {
         JFileChooser jFileChooser = ComponentCreator.initComponent(new JFileChooser(System.getProperty("user.home") + File.separator + "Desktop"));
         FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("fractal image types", "bmp", "jpg", "png");
         jFileChooser.addChoosableFileFilter(extensionFilter);
@@ -106,7 +108,7 @@ public class SaveFractalDialog {
         }
     }
 
-    private static void setSaveFractalState(File file) {
+    private static void setSaveFractalState(GameStateManager gameStateManager, File file) {
         int imageWidth;
         try {
             imageWidth = Integer.parseInt(instance.widthTextField.getText());
@@ -122,13 +124,13 @@ public class SaveFractalDialog {
             return;
         }
         FractalMain.enableButtonsAndSliders(false);
-        GameStateManager.setGameState(new SaveFractalGameState(file, imageWidth, imageHeight));
+        gameStateManager.setGameState(new SaveFractalGameState(gameStateManager, file, imageWidth, imageHeight));
     }
 
     public static void writeFractalToFile(File file) {
         try {
             String extension = file.getName().substring(file.getName().lastIndexOf(".") + 1);
-            ImageIO.write(FractalManager.requestImage(), extension, file);
+            ImageIO.write(((JavaGameImage) FractalManager.requestImage()).getImage(), extension, file);
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }

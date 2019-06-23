@@ -1,10 +1,10 @@
 package fr.main;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 
 import gt.component.MouseTracker;
 import gt.gameentity.Drawable;
+import gt.gameentity.IGraphics;
 import gt.gameentity.Sizable;
 import gt.gamestate.UserInput;
 
@@ -46,17 +46,14 @@ public class FractalUserInputHandler implements Drawable, Sizable {
     }
 
     @Override
-    public void drawOn(Graphics2D graphics) {
+    public void drawOn(IGraphics g) {
         if (isZoomDragging) {
-            drawZoomPrediction(graphics);
-            graphics.setColor(Color.RED);
-            graphics.drawRect(getDragUpperLeftX(), getDragUpperLeftY(), getDragWidth(), getDragHeight());
+            drawZoomPrediction(g);
+            g.drawRect(getDragUpperLeftX(), getDragUpperLeftY(), getDragWidth(), getDragHeight(), Color.RED);
         }
     }
 
-    private void drawZoomPrediction(Graphics2D g) {
-        g.setColor(Color.GREEN);
-
+    private void drawZoomPrediction(IGraphics g) {
         double x0 = getDragUpperLeftX();
         double y0 = getDragUpperLeftY();
 
@@ -74,7 +71,7 @@ public class FractalUserInputHandler implements Drawable, Sizable {
             y0 -= (zoomHeight - getDragHeight()) / 2;
         }
 
-        drawRect(g, x0, y0, zoomWidth, zoomHeight);
+        g.drawRect(x0, y0, zoomWidth, zoomHeight, Color.GREEN);
     }
 
     @Override

@@ -1,16 +1,18 @@
 package fr.main;
 
-import java.awt.Graphics2D;
-
+import gt.component.MouseTracker;
+import gt.gameentity.GameImageDrawer;
+import gt.gameentity.IGraphics;
 import gt.gamestate.GameState;
-import gt.gamestate.GameStateManager;
 import gt.gamestate.UserInput;
 
 public class FractalGameState implements GameState {
+    private final GameImageDrawer imageDrawer;
     private final FractalUserInputHandler inputHandler;
 
-    public FractalGameState() {
-        inputHandler = new FractalUserInputHandler(GameStateManager.getMouseTracker());
+    public FractalGameState(GameImageDrawer imageDrawer, MouseTracker mouseTracker) {
+        this.imageDrawer = imageDrawer;
+        inputHandler = new FractalUserInputHandler(mouseTracker);
     }
 
     @Override
@@ -19,9 +21,9 @@ public class FractalGameState implements GameState {
     }
 
     @Override
-    public void drawOn(Graphics2D graphics) {
-        graphics.drawImage(FractalManager.requestImage(), 0, 0, null);
-        inputHandler.drawOn(graphics);
+    public void drawOn(IGraphics g) {
+        imageDrawer.drawImage(g, FractalManager.requestImage(), 0, 0);
+        inputHandler.drawOn(g);
     }
 
     @Override

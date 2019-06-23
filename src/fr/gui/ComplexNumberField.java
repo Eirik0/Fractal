@@ -17,12 +17,12 @@ import gt.gamestate.GameStateManager;
 
 @SuppressWarnings("serial")
 public class ComplexNumberField extends JTextField {
-    public ComplexNumberField() {
+    public ComplexNumberField(GameStateManager gameStateManager) {
         ComponentCreator.initComponent(this);
         setColumns(10);
         addActionListener(e -> {
             FractalManager.setFractal(textToFractal(getText()));
-            GameStateManager.requestFocus();
+            gameStateManager.requestFocus();
         });
     }
 

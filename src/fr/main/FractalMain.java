@@ -41,13 +41,15 @@ public class FractalMain {
         // Main Panel
         GamePanel mainPanel = new GamePanel(TITLE);
         mainPanel.setPreferredSize(new Dimension(ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT));
+        GameStateManager gameStateManager = mainPanel.getGameStateManager();
+        FractalManager.setImageDrawer(gameStateManager.getImageDrawer());
 
         // Buttons, etc
         JButton saveButton = ComponentCreator.createButton("Save", () -> SaveFractalDialog.show(mainPanel));
 
         JLabel complexLabel = ComponentCreator.createLabel("a + bi: ", Color.GREEN);
 
-        ComplexNumberField complexField = new ComplexNumberField();
+        ComplexNumberField complexField = new ComplexNumberField(gameStateManager);
         complexField.setText(DEFAULT_FRACTAL_TEXT);
 
         JLabel colorLabel = ComponentCreator.createLabel("cols:", Color.GREEN);
@@ -78,8 +80,7 @@ public class FractalMain {
                 saveButton);
 
         // MainFrame, etc
-        GameStateManager.setMainPanel(mainPanel);
-        GameStateManager.setGameState(new FractalGameState());
+        gameStateManager.setGameState(new FractalGameState(gameStateManager.getImageDrawer(), gameStateManager.getMouseTracker()));
 
         MainFrame mainFrame = new MainFrame(TITLE, mainPanel);
 

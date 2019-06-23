@@ -1,19 +1,21 @@
 package fr.draw;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 
 import fr.main.FractalManager;
 import gt.async.ThreadWorker;
 import gt.gameentity.Drawable;
+import gt.gameentity.GameImageDrawer;
+import gt.gameentity.IGameImage;
+import gt.gameentity.IGraphics;
 
 public class FractalDrawer implements Drawable {
     public static final int INITIAL_LOG_CP = 5;
     public static final int MIN_LOG_CP = -3;
 
-    private final BufferedImage image;
-    private final Graphics2D graphics;
+    private final GameImageDrawer imageDrawer;
+    private final IGameImage image;
+    private final IGraphics graphics;
 
     private volatile boolean noStopRequested = true;
     private volatile boolean isDrawingComplete = false;
@@ -30,7 +32,7 @@ public class FractalDrawer implements Drawable {
     // 5 -> 32x32 blocks -3 -> 1x1 blocks with 64 calculations
     private int logCP;
 
-    public FractalDrawer(BufferedImage image, int x0, int y0, int x1, int y1, int initialX, int logCP) {
+    public FractalDrawer(GameImageDrawer imageDrawer, IGameImage image, int x0, int y0, int x1, int y1, int initialX, int logCP) {
         this.x0 = x0;
         this.y0 = y0;
         this.x1 = x1;
@@ -39,8 +41,9 @@ public class FractalDrawer implements Drawable {
         this.initialX = initialX;
         this.logCP = logCP;
 
+        this.imageDrawer = imageDrawer;
         this.image = image;
-        graphics = image.createGraphics();
+        graphics = image.getGraphics();
     }
 
     public void startDrawing(ThreadWorker worker) {
@@ -72,7 +75,7 @@ public class FractalDrawer implements Drawable {
                     graphics.fillRect(currentX - x0, y - y0, width, width);
                 } else {
                     graphics.setColor(FractalManager.getColor(currentX + offset, y + offset, calculationsX));
-                    graphics.drawLine(currentX - x0, y - y0, currentX - x0, y - y0);
+                    graphics.drawPixel(currentX - x0, y - y0);
                 }
                 y += width;
             } while (noStopRequested && y < y1);
@@ -84,8 +87,8 @@ public class FractalDrawer implements Drawable {
     }
 
     @Override
-    public void drawOn(Graphics2D g) {
-        g.drawImage(image, x0, y0, getImageWidth(), getImageHeight(), null);
+    public void drawOn(IGraphics g) {
+        imageDrawer.drawImage(g, image, x0, y0, getImageWidth(), getImageHeight());
     }
 
     public void stopAndWait() {
@@ -118,18 +121,18 @@ public class FractalDrawer implements Drawable {
     public FractalDrawer[] splitVertically() {
         stopAndWait();
 
-        BufferedImage top = splitImage(0, 0, getImageWidth(), getImageHeight() / 2);
-        BufferedImage bottom = splitImage(0, getImageHeight() / 2, getImageWidth(), getImageHeight() - (getImageHeight() / 2));
+        IGameImage top = splitImage(0, 0, getImageWidth(), getImageHeight() / 2);
+        IGameImage bottom = splitImage(0, getImageHeight() / 2, getImageWidth(), getImageHeight() - (getImageHeight() / 2));
 
         return new FractalDrawer[] {
-                new FractalDrawer(top, x0, y0, x1, y0 + getImageHeight() / 2, currentX, logCP),
-                new FractalDrawer(bottom, x0, y0 + getImageHeight() / 2, x1, y1, currentX, logCP)
+                new FractalDrawer(imageDrawer, top, x0, y0, x1, y0 + getImageHeight() / 2, currentX, logCP),
+                new FractalDrawer(imageDrawer, bottom, x0, y0 + getImageHeight() / 2, x1, y1, currentX, logCP)
         };
     }
 
-    private BufferedImage splitImage(int x, int y, int width, int height) {
-        BufferedImage split = image.getSubimage(x, y, width, height);
-        Graphics2D g = split.createGraphics();
+    private IGameImage splitImage(int x, int y, int width, int height) {
+        IGameImage split = image.getSubimage(x, y, width, height);
+        IGraphics g = split.getGraphics();
         g.setColor(Color.RED);
         g.drawLine(currentX - x0, 0, width, 0);
         return split;

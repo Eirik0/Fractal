@@ -5,6 +5,7 @@ import java.util.Random;
 
 import gt.component.ComponentCreator;
 import gt.gameentity.DrawingMethods;
+import gt.util.EMath;
 
 public class FractalColorer implements DrawingMethods {
     private static final Random RANDOM = new Random();
@@ -58,7 +59,7 @@ public class FractalColorer implements DrawingMethods {
             newAllColors[allColorIndex++] = previousColor;
             Color nextColor = baseColors[(baseColorIndex + 1) % baseColors.length];
             for (int fadeColorIndex = 1; fadeColorIndex < numBetween; ++fadeColorIndex) {
-                newAllColors[allColorIndex++] = fadeToColor(previousColor, nextColor, (double) fadeColorIndex / numBetween);
+                newAllColors[allColorIndex++] = DrawingMethods.fadeToColor(previousColor, nextColor, (double) fadeColorIndex / numBetween);
             }
             previousColor = nextColor;
         }
@@ -79,7 +80,7 @@ public class FractalColorer implements DrawingMethods {
             green += color.getGreen();
             blue += color.getBlue();
         }
-        return new Color(round(red / iterations.length), round(green / iterations.length), round(blue / iterations.length));
+        return new Color(EMath.round(red / iterations.length), EMath.round(green / iterations.length), EMath.round(blue / iterations.length));
     }
 
     private static Color newRandomColor() {

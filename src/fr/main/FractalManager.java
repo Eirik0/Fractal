@@ -1,7 +1,6 @@
 package fr.main;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
 
 import fr.draw.FractalColorer;
 import fr.draw.FractalDrawerDelegate;
@@ -9,15 +8,17 @@ import fr.fractal.Fractal;
 import fr.gui.ComplexNumberField;
 import gt.component.ComponentCreator;
 import gt.gameentity.CartesianSpace;
-import gt.gameentity.DrawingMethods;
+import gt.gameentity.GameImageDrawer;
+import gt.gameentity.IGameImage;
+import gt.util.EMath;
 
 public class FractalManager {
     private static final FractalManager instance = new FractalManager();
 
     private Fractal fractal;
-    private CartesianSpace cs;
+    private final CartesianSpace cs;
     private final FractalColorer colorer;
-    private final FractalDrawerDelegate delegate;
+    private FractalDrawerDelegate delegate;
 
     private int numIterations = FractalMain.DEFAULT_NUM_ITERATIONS;
 
@@ -25,7 +26,10 @@ public class FractalManager {
         fractal = ComplexNumberField.textToFractal(FractalMain.DEFAULT_FRACTAL_TEXT);
         cs = new CartesianSpace(ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT, -2.5, -2.5, 5, 5);
         colorer = new FractalColorer(FractalMain.DEFAULT_NUM_BASE_COLORS, FractalMain.DEFAULT_NUM_BETWEEN_COLORS);
-        delegate = new FractalDrawerDelegate(ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT);
+    }
+
+    public static void setImageDrawer(GameImageDrawer imageDrawer) {
+        instance.delegate = new FractalDrawerDelegate(imageDrawer, ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT);
     }
 
     public static void resetColors() {
@@ -66,9 +70,9 @@ public class FractalManager {
         instance.delegate.requestReset();
     }
 
-    public static BufferedImage requestImage() {
-        int imageWidth = DrawingMethods.roundS(instance.cs.getImageWidth());
-        int imageHeight = DrawingMethods.roundS(instance.cs.getImageHeight());
+    public static IGameImage requestImage() {
+        int imageWidth = EMath.round(instance.cs.getImageWidth());
+        int imageHeight = EMath.round(instance.cs.getImageHeight());
         return instance.delegate.requestImage(imageWidth, imageHeight);
     }
 
@@ -82,11 +86,11 @@ public class FractalManager {
     }
 
     public static int getImageWidth() {
-        return DrawingMethods.roundS(instance.cs.getImageWidth());
+        return EMath.round(instance.cs.getImageWidth());
     }
 
     public static int getImageHeight() {
-        return DrawingMethods.roundS(instance.cs.getImageHeight());
+        return EMath.round(instance.cs.getImageHeight());
     }
 
     public static void setFractalBounds(double x0, double y0, double width, double height) {

@@ -1,14 +1,15 @@
 package fr.draw;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 import gt.async.ThreadWorker;
-import gt.gameentity.DrawingMethods;
+import gt.gameentity.GameImageDrawer;
+import gt.gameentity.IGameImage;
+import gt.gameentity.IGraphics;
+import gt.util.EMath;
 
 public class FractalDrawerDelegate {
     private final int horizontalDrawers;
@@ -21,12 +22,14 @@ public class FractalDrawerDelegate {
     private volatile boolean needsNewImage = false;
     private volatile boolean savingImage = false;
 
-    private BufferedImage currentImage;
-    private Graphics2D currentGraphics;
+    private final GameImageDrawer imageDrawer;
+    private IGameImage currentImage;
+    private IGraphics currentGraphics;
 
-    public FractalDrawerDelegate(int imageWidth, int imageHeight) {
-        currentImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
-        currentGraphics = currentImage.createGraphics();
+    public FractalDrawerDelegate(GameImageDrawer imageDrawer, int imageWidth, int imageHeight) {
+        this.imageDrawer = imageDrawer;
+        currentImage = imageDrawer.newGameImage(imageWidth, imageHeight);
+        currentGraphics = currentImage.getGraphics();
 
         int numCores = Runtime.getRuntime().availableProcessors();
         int coresToUse = Math.max(1, numCores - 2);
@@ -54,22 +57,23 @@ public class FractalDrawerDelegate {
         drawers.clear();
 
         if (currentImage.getWidth() != imageWidth || currentImage.getHeight() != imageHeight || savingImage) {
-            BufferedImage oldImage = currentImage;
-            currentImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
-            currentGraphics = currentImage.createGraphics();
+            IGameImage oldImage = currentImage;
+            currentImage = imageDrawer.newGameImage(imageWidth, imageHeight);
+            currentGraphics = currentImage.getGraphics();
             if (!savingImage) {
-                currentGraphics.drawImage(oldImage, 0, 0, imageWidth, imageHeight, null);
+                imageDrawer.drawImage(currentGraphics, oldImage, 0, 0, imageWidth, imageHeight);
             }
         }
 
         int logCP = savingImage ? FractalDrawer.MIN_LOG_CP : FractalDrawer.INITIAL_LOG_CP;
         for (int x = 0; x < horizontalDrawers; ++x) {
             for (int y = 0; y < verticalDrawers; ++y) {
-                int x0 = DrawingMethods.roundS((double) imageWidth * x / horizontalDrawers);
-                int y0 = DrawingMethods.roundS((double) imageHeight * y / verticalDrawers);
-                int x1 = DrawingMethods.roundS((double) imageWidth * (x + 1) / horizontalDrawers);
-                int y1 = DrawingMethods.roundS((double) imageHeight * (y + 1) / verticalDrawers);
-                FractalDrawer drawer = new FractalDrawer(currentImage.getSubimage(x0, y0, x1 - x0, y1 - y0), x0, y0, x1, y1, x0, logCP);
+                int x0 = EMath.round((double) imageWidth * x / horizontalDrawers);
+                int y0 = EMath.round((double) imageHeight * y / verticalDrawers);
+                int x1 = EMath.round((double) imageWidth * (x + 1) / horizontalDrawers);
+                int y1 = EMath.round((double) imageHeight * (y + 1) / verticalDrawers);
+                IGameImage subimage = currentImage.getSubimage(x0, y0, x1 - x0, y1 - y0);
+                FractalDrawer drawer = new FractalDrawer(imageDrawer, subimage, x0, y0, x1, y1, x0, logCP);
                 drawers.add(drawer);
                 startWork(drawer);
             }
@@ -105,7 +109,7 @@ public class FractalDrawerDelegate {
         this.savingImage = savingImage;
     }
 
-    public BufferedImage requestImage(int imageWidth, int imageHeight) {
+    public IGameImage requestImage(int imageWidth, int imageHeight) {
         if (needsNewImage) {
             needsNewImage = false;
             createNewImage(imageWidth, imageHeight);
@@ -122,7 +126,7 @@ public class FractalDrawerDelegate {
         setUpDrawers(imageWidth, imageHeight);
     }
 
-    private BufferedImage createImageFromDrawers() {
+    private IGameImage createImageFromDrawers() {
         for (FractalDrawer drawer : drawers) {
             drawer.drawOn(currentGraphics);
         }
