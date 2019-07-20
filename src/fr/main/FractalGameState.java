@@ -1,16 +1,16 @@
 package fr.main;
 
 import gt.component.MouseTracker;
-import gt.gameentity.GameImageDrawer;
+import gt.gameentity.IGameImageDrawer;
 import gt.gameentity.IGraphics;
 import gt.gamestate.GameState;
 import gt.gamestate.UserInput;
 
 public class FractalGameState implements GameState {
-    private final GameImageDrawer imageDrawer;
+    private final IGameImageDrawer imageDrawer;
     private final FractalUserInputHandler inputHandler;
 
-    public FractalGameState(GameImageDrawer imageDrawer, MouseTracker mouseTracker) {
+    public FractalGameState(IGameImageDrawer imageDrawer, MouseTracker mouseTracker) {
         this.imageDrawer = imageDrawer;
         inputHandler = new FractalUserInputHandler(mouseTracker);
     }

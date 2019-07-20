@@ -8,8 +8,8 @@ import fr.fractal.Fractal;
 import fr.gui.ComplexNumberField;
 import gt.component.ComponentCreator;
 import gt.gameentity.CartesianSpace;
-import gt.gameentity.GameImageDrawer;
 import gt.gameentity.IGameImage;
+import gt.gameentity.IGameImageDrawer;
 import gt.util.EMath;
 
 public class FractalManager {
@@ -28,7 +28,7 @@ public class FractalManager {
         colorer = new FractalColorer(FractalMain.DEFAULT_NUM_BASE_COLORS, FractalMain.DEFAULT_NUM_BETWEEN_COLORS);
     }
 
-    public static void setImageDrawer(GameImageDrawer imageDrawer) {
+    public static void setImageDrawer(IGameImageDrawer imageDrawer) {
         instance.delegate = new FractalDrawerDelegate(imageDrawer, ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT);
     }
 

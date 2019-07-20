@@ -5,15 +5,15 @@ import java.awt.Color;
 import fr.main.FractalManager;
 import gt.async.ThreadWorker;
 import gt.gameentity.Drawable;
-import gt.gameentity.GameImageDrawer;
 import gt.gameentity.IGameImage;
+import gt.gameentity.IGameImageDrawer;
 import gt.gameentity.IGraphics;
 
 public class FractalDrawer implements Drawable {
     public static final int INITIAL_LOG_CP = 5;
     public static final int MIN_LOG_CP = -3;
 
-    private final GameImageDrawer imageDrawer;
+    private final IGameImageDrawer imageDrawer;
     private final IGameImage image;
     private final IGraphics graphics;
 
@@ -32,7 +32,7 @@ public class FractalDrawer implements Drawable {
     // 5 -> 32x32 blocks -3 -> 1x1 blocks with 64 calculations
     private int logCP;
 
-    public FractalDrawer(GameImageDrawer imageDrawer, IGameImage image, int x0, int y0, int x1, int y1, int initialX, int logCP) {
+    public FractalDrawer(IGameImageDrawer imageDrawer, IGameImage image, int x0, int y0, int x1, int y1, int initialX, int logCP) {
         this.x0 = x0;
         this.y0 = y0;
         this.x1 = x1;

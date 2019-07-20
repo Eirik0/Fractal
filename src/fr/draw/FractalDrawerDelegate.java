@@ -6,8 +6,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 import gt.async.ThreadWorker;
-import gt.gameentity.GameImageDrawer;
 import gt.gameentity.IGameImage;
+import gt.gameentity.IGameImageDrawer;
 import gt.gameentity.IGraphics;
 import gt.util.EMath;
 
@@ -22,11 +22,11 @@ public class FractalDrawerDelegate {
     private volatile boolean needsNewImage = false;
     private volatile boolean savingImage = false;
 
-    private final GameImageDrawer imageDrawer;
+    private final IGameImageDrawer imageDrawer;
     private IGameImage currentImage;
     private IGraphics currentGraphics;
 
-    public FractalDrawerDelegate(GameImageDrawer imageDrawer, int imageWidth, int imageHeight) {
+    public FractalDrawerDelegate(IGameImageDrawer imageDrawer, int imageWidth, int imageHeight) {
         this.imageDrawer = imageDrawer;
         currentImage = imageDrawer.newGameImage(imageWidth, imageHeight);
         currentGraphics = currentImage.getGraphics();
