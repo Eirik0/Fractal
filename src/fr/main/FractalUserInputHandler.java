@@ -2,21 +2,20 @@ package fr.main;
 
 import java.awt.Color;
 
-import gt.component.MouseTracker;
+import gt.component.IMouseTracker;
 import gt.gameentity.Drawable;
 import gt.gameentity.IGraphics;
 import gt.gameentity.Sizable;
 import gt.gamestate.UserInput;
 
 public class FractalUserInputHandler implements Drawable, Sizable {
-    private final MouseTracker mouseTracker;
+    private final IMouseTracker mouseTracker;
 
     private boolean leftButtonPressed = false;
     private boolean ctrlPressed = false;
 
     private int mouseX = 0;
     private int mouseY = 0;
-    private double mouseWheelRotation = 0;
 
     private double screenWidth = 0;
     private double screenHeight = 0;
@@ -25,7 +24,7 @@ public class FractalUserInputHandler implements Drawable, Sizable {
     private int dragStartX = 0;
     private int dragStartY = 0;
 
-    public FractalUserInputHandler(MouseTracker mouseTracker) {
+    public FractalUserInputHandler(IMouseTracker mouseTracker) {
         this.mouseTracker = mouseTracker;
     }
 
@@ -75,7 +74,7 @@ public class FractalUserInputHandler implements Drawable, Sizable {
     }
 
     @Override
-    public void setSize(int width, int height) {
+    public void setSize(double width, double height) {
         screenWidth = width;
         screenHeight = height;
     }
@@ -84,22 +83,20 @@ public class FractalUserInputHandler implements Drawable, Sizable {
         switch (input) {
         case MOUSE_MOVED:
             if (leftButtonPressed && ctrlPressed && !isZoomDragging) {
-                FractalManager.move(mouseX - mouseTracker.mouseX, mouseY - mouseTracker.mouseY);
+                FractalManager.move(mouseX - mouseTracker.mouseX(), mouseY - mouseTracker.mouseY());
             }
-            mouseX = mouseTracker.mouseX;
-            mouseY = mouseTracker.mouseY;
+            mouseX = mouseTracker.mouseX();
+            mouseY = mouseTracker.mouseY();
             break;
         case MOUSE_WHEEL_MOVED:
-            double wheelDelta = mouseWheelRotation - mouseTracker.wheelRotation;
-            FractalManager.zoom(0.1 * wheelDelta, mouseX, mouseY);
-            mouseWheelRotation = mouseTracker.wheelRotation;
+            FractalManager.zoom(-0.1 * mouseTracker.wheelRotationDelta(), mouseX, mouseY);
             break;
         case LEFT_BUTTON_PRESSED:
             leftButtonPressed = true;
             if (!ctrlPressed) {
                 isZoomDragging = true;
-                dragStartX = mouseTracker.mouseX;
-                dragStartY = mouseTracker.mouseY;
+                dragStartX = mouseTracker.mouseX();
+                dragStartY = mouseTracker.mouseY();
             }
             break;
         case LEFT_BUTTON_RELEASED:

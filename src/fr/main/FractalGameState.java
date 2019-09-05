@@ -1,6 +1,6 @@
 package fr.main;
 
-import gt.component.MouseTracker;
+import gt.component.IMouseTracker;
 import gt.gameentity.IGameImageDrawer;
 import gt.gameentity.IGraphics;
 import gt.gamestate.GameState;
@@ -10,7 +10,7 @@ public class FractalGameState implements GameState {
     private final IGameImageDrawer imageDrawer;
     private final FractalUserInputHandler inputHandler;
 
-    public FractalGameState(IGameImageDrawer imageDrawer, MouseTracker mouseTracker) {
+    public FractalGameState(IGameImageDrawer imageDrawer, IMouseTracker mouseTracker) {
         this.imageDrawer = imageDrawer;
         inputHandler = new FractalUserInputHandler(mouseTracker);
     }
@@ -27,7 +27,7 @@ public class FractalGameState implements GameState {
     }
 
     @Override
-    public void setSize(int width, int height) {
+    public void setSize(double width, double height) {
         FractalManager.setImageSize(width, height, false);
         inputHandler.setSize(width, height);
     }

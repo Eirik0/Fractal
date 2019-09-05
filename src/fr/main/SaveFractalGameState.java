@@ -14,8 +14,8 @@ public class SaveFractalGameState implements GameState {
 
     private final File file;
 
-    private int width = ComponentCreator.DEFAULT_WIDTH;
-    private int height = ComponentCreator.DEFAULT_WIDTH;
+    private double width = ComponentCreator.DEFAULT_WIDTH;
+    private double height = ComponentCreator.DEFAULT_WIDTH;
 
     public SaveFractalGameState(GameStateManager gameStateManager, File file, int imageWidth, int imageHeight) {
         this.gameStateManager = gameStateManager;
@@ -39,7 +39,7 @@ public class SaveFractalGameState implements GameState {
     }
 
     @Override
-    public void setSize(int width, int height) {
+    public void setSize(double width, double height) {
         this.width = width;
         this.height = height;
     }

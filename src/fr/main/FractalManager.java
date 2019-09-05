@@ -80,7 +80,7 @@ public class FractalManager {
         return instance.delegate.isDrawingComplete();
     }
 
-    public static void setImageSize(int width, int height, boolean savingImage) {
+    public static void setImageSize(double width, double height, boolean savingImage) {
         instance.cs.setSize(width, height);
         instance.delegate.requestReset(savingImage);
     }
