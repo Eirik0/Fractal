@@ -3,7 +3,6 @@ package fr.main;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,11 +35,10 @@ public class FractalMain {
     private static final List<Component> buttonsAndSliders = new ArrayList<>();
 
     public static void main(String[] args) {
-        ComponentCreator.setCrossPlatformLookAndFeel();
-
         // Main Panel
-        GamePanel mainPanel = new GamePanel(TITLE);
-        mainPanel.setPreferredSize(new Dimension(ComponentCreator.DEFAULT_WIDTH, ComponentCreator.DEFAULT_HEIGHT));
+        MainFrame mainFrame = new MainFrame(TITLE);
+        GamePanel mainPanel = mainFrame.getGamePanel();
+
         GameStateManager gameStateManager = mainPanel.getGameStateManager();
         FractalManager.setImageDrawer(gameStateManager.getImageDrawer());
 
@@ -81,8 +79,6 @@ public class FractalMain {
 
         // MainFrame, etc
         gameStateManager.setGameState(new FractalGameState(gameStateManager.getImageDrawer(), gameStateManager.getMouseTracker()));
-
-        MainFrame mainFrame = new MainFrame(TITLE, mainPanel);
 
         JPanel glassPane = (JPanel) mainFrame.getFrame().getGlassPane();
         JPanel glassPanel = new JPanel(new BorderLayout());
